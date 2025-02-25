@@ -11,3 +11,5 @@ export { default as AppProfileContainer } from "@/components/app/common/AppProfi
 export { default as AppSkeletonTableRow } from "@/components/app/common/AppSkeletonTableRow";
 export { default as AppDeleteCategory } from "@/components/app/deleteComponents/AppDeleteCategory";
 export { default as AppCategoryFilter } from "@/components/app/filters/AppCategoryFilter";
+export { default as AppTextEditor } from "@/components/app/common/AppTextEditor";
+export { default as AppToolBar } from "@/components/app/common/AppToolBar";
