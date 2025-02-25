@@ -1,0 +1,1982 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 16.4
+-- Dumped by pg_dump version 16.4
+
+-- Started on 2025-02-25 07:41:52
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- TOC entry 246 (class 1259 OID 113821)
+-- Name: brands; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.brands (
+    id bigint NOT NULL,
+    name character varying(255) NOT NULL,
+    slug character varying(255) NOT NULL,
+    logo character varying(255),
+    description text,
+    is_active boolean DEFAULT true NOT NULL,
+    created_at timestamp(0) without time zone,
+    updated_at timestamp(0) without time zone
+);
+
+
+ALTER TABLE public.brands OWNER TO postgres;
+
+--
+-- TOC entry 245 (class 1259 OID 113820)
+-- Name: brands_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.brands_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.brands_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 5079 (class 0 OID 0)
+-- Dependencies: 245
+-- Name: brands_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.brands_id_seq OWNED BY public.brands.id;
+
+
+--
+-- TOC entry 221 (class 1259 OID 113643)
+-- Name: cache; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.cache (
+    key character varying(255) NOT NULL,
+    value text NOT NULL,
+    expiration integer NOT NULL
+);
+
+
+ALTER TABLE public.cache OWNER TO postgres;
+
+--
+-- TOC entry 222 (class 1259 OID 113650)
+-- Name: cache_locks; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.cache_locks (
+    key character varying(255) NOT NULL,
+    owner character varying(255) NOT NULL,
+    expiration integer NOT NULL
+);
+
+
+ALTER TABLE public.cache_locks OWNER TO postgres;
+
+--
+-- TOC entry 248 (class 1259 OID 113833)
+-- Name: categories; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.categories (
+    id bigint NOT NULL,
+    name character varying(255) NOT NULL,
+    slug character varying(255) NOT NULL,
+    parent_id bigint,
+    is_active boolean DEFAULT true NOT NULL,
+    created_at timestamp(0) without time zone,
+    updated_at timestamp(0) without time zone
+);
+
+
+ALTER TABLE public.categories OWNER TO postgres;
+
+--
+-- TOC entry 247 (class 1259 OID 113832)
+-- Name: categories_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.categories_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.categories_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 5080 (class 0 OID 0)
+-- Dependencies: 247
+-- Name: categories_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.categories_id_seq OWNED BY public.categories.id;
+
+
+--
+-- TOC entry 244 (class 1259 OID 113804)
+-- Name: customer_addresses; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.customer_addresses (
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    name character varying(255) NOT NULL,
+    mobile character varying(255) NOT NULL,
+    address_line_1 character varying(255) NOT NULL,
+    address_line_2 character varying(255),
+    city character varying(255) NOT NULL,
+    state character varying(255) NOT NULL,
+    pincode character varying(255) NOT NULL,
+    landmark character varying(255),
+    type character varying(255) DEFAULT 'home'::character varying NOT NULL,
+    is_default boolean DEFAULT false NOT NULL,
+    created_at timestamp(0) without time zone,
+    updated_at timestamp(0) without time zone
+);
+
+
+ALTER TABLE public.customer_addresses OWNER TO postgres;
+
+--
+-- TOC entry 5081 (class 0 OID 0)
+-- Dependencies: 244
+-- Name: COLUMN customer_addresses.type; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.customer_addresses.type IS 'home, office, other';
+
+
+--
+-- TOC entry 243 (class 1259 OID 113803)
+-- Name: customer_addresses_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.customer_addresses_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.customer_addresses_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 5082 (class 0 OID 0)
+-- Dependencies: 243
+-- Name: customer_addresses_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.customer_addresses_id_seq OWNED BY public.customer_addresses.id;
+
+
+--
+-- TOC entry 227 (class 1259 OID 113675)
+-- Name: failed_jobs; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.failed_jobs (
+    id bigint NOT NULL,
+    uuid character varying(255) NOT NULL,
+    connection text NOT NULL,
+    queue text NOT NULL,
+    payload text NOT NULL,
+    exception text NOT NULL,
+    failed_at timestamp(0) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+ALTER TABLE public.failed_jobs OWNER TO postgres;
+
+--
+-- TOC entry 226 (class 1259 OID 113674)
+-- Name: failed_jobs_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.failed_jobs_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.failed_jobs_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 5083 (class 0 OID 0)
+-- Dependencies: 226
+-- Name: failed_jobs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.failed_jobs_id_seq OWNED BY public.failed_jobs.id;
+
+
+--
+-- TOC entry 225 (class 1259 OID 113667)
+-- Name: job_batches; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.job_batches (
+    id character varying(255) NOT NULL,
+    name character varying(255) NOT NULL,
+    total_jobs integer NOT NULL,
+    pending_jobs integer NOT NULL,
+    failed_jobs integer NOT NULL,
+    failed_job_ids text NOT NULL,
+    options text,
+    cancelled_at integer,
+    created_at integer NOT NULL,
+    finished_at integer
+);
+
+
+ALTER TABLE public.job_batches OWNER TO postgres;
+
+--
+-- TOC entry 224 (class 1259 OID 113658)
+-- Name: jobs; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.jobs (
+    id bigint NOT NULL,
+    queue character varying(255) NOT NULL,
+    payload text NOT NULL,
+    attempts smallint NOT NULL,
+    reserved_at integer,
+    available_at integer NOT NULL,
+    created_at integer NOT NULL
+);
+
+
+ALTER TABLE public.jobs OWNER TO postgres;
+
+--
+-- TOC entry 223 (class 1259 OID 113657)
+-- Name: jobs_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.jobs_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.jobs_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 5084 (class 0 OID 0)
+-- Dependencies: 223
+-- Name: jobs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.jobs_id_seq OWNED BY public.jobs.id;
+
+
+--
+-- TOC entry 216 (class 1259 OID 113610)
+-- Name: migrations; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.migrations (
+    id integer NOT NULL,
+    migration character varying(255) NOT NULL,
+    batch integer NOT NULL
+);
+
+
+ALTER TABLE public.migrations OWNER TO postgres;
+
+--
+-- TOC entry 215 (class 1259 OID 113609)
+-- Name: migrations_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.migrations_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.migrations_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 5085 (class 0 OID 0)
+-- Dependencies: 215
+-- Name: migrations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.migrations_id_seq OWNED BY public.migrations.id;
+
+
+--
+-- TOC entry 238 (class 1259 OID 113746)
+-- Name: model_has_permissions; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.model_has_permissions (
+    permission_id bigint NOT NULL,
+    model_type character varying(255) NOT NULL,
+    model_id bigint NOT NULL
+);
+
+
+ALTER TABLE public.model_has_permissions OWNER TO postgres;
+
+--
+-- TOC entry 239 (class 1259 OID 113757)
+-- Name: model_has_roles; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.model_has_roles (
+    role_id bigint NOT NULL,
+    model_type character varying(255) NOT NULL,
+    model_id bigint NOT NULL
+);
+
+
+ALTER TABLE public.model_has_roles OWNER TO postgres;
+
+--
+-- TOC entry 229 (class 1259 OID 113694)
+-- Name: oauth_access_tokens; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.oauth_access_tokens (
+    id character varying(100) NOT NULL,
+    user_id bigint,
+    client_id uuid NOT NULL,
+    name character varying(255),
+    scopes text,
+    revoked boolean NOT NULL,
+    created_at timestamp(0) without time zone,
+    updated_at timestamp(0) without time zone,
+    expires_at timestamp(0) without time zone
+);
+
+
+ALTER TABLE public.oauth_access_tokens OWNER TO postgres;
+
+--
+-- TOC entry 228 (class 1259 OID 113686)
+-- Name: oauth_auth_codes; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.oauth_auth_codes (
+    id character varying(100) NOT NULL,
+    user_id bigint NOT NULL,
+    client_id uuid NOT NULL,
+    scopes text,
+    revoked boolean NOT NULL,
+    expires_at timestamp(0) without time zone
+);
+
+
+ALTER TABLE public.oauth_auth_codes OWNER TO postgres;
+
+--
+-- TOC entry 231 (class 1259 OID 113708)
+-- Name: oauth_clients; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.oauth_clients (
+    id uuid NOT NULL,
+    user_id bigint,
+    name character varying(255) NOT NULL,
+    secret character varying(100),
+    provider character varying(255),
+    redirect text NOT NULL,
+    personal_access_client boolean NOT NULL,
+    password_client boolean NOT NULL,
+    revoked boolean NOT NULL,
+    created_at timestamp(0) without time zone,
+    updated_at timestamp(0) without time zone
+);
+
+
+ALTER TABLE public.oauth_clients OWNER TO postgres;
+
+--
+-- TOC entry 233 (class 1259 OID 113717)
+-- Name: oauth_personal_access_clients; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.oauth_personal_access_clients (
+    id bigint NOT NULL,
+    client_id uuid NOT NULL,
+    created_at timestamp(0) without time zone,
+    updated_at timestamp(0) without time zone
+);
+
+
+ALTER TABLE public.oauth_personal_access_clients OWNER TO postgres;
+
+--
+-- TOC entry 232 (class 1259 OID 113716)
+-- Name: oauth_personal_access_clients_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.oauth_personal_access_clients_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.oauth_personal_access_clients_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 5086 (class 0 OID 0)
+-- Dependencies: 232
+-- Name: oauth_personal_access_clients_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.oauth_personal_access_clients_id_seq OWNED BY public.oauth_personal_access_clients.id;
+
+
+--
+-- TOC entry 230 (class 1259 OID 113702)
+-- Name: oauth_refresh_tokens; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.oauth_refresh_tokens (
+    id character varying(100) NOT NULL,
+    access_token_id character varying(100) NOT NULL,
+    revoked boolean NOT NULL,
+    expires_at timestamp(0) without time zone
+);
+
+
+ALTER TABLE public.oauth_refresh_tokens OWNER TO postgres;
+
+--
+-- TOC entry 219 (class 1259 OID 113627)
+-- Name: password_reset_tokens; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.password_reset_tokens (
+    email character varying(255) NOT NULL,
+    token character varying(255) NOT NULL,
+    created_at timestamp(0) without time zone
+);
+
+
+ALTER TABLE public.password_reset_tokens OWNER TO postgres;
+
+--
+-- TOC entry 235 (class 1259 OID 113725)
+-- Name: permissions; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.permissions (
+    id bigint NOT NULL,
+    name character varying(255) NOT NULL,
+    guard_name character varying(255) NOT NULL,
+    created_at timestamp(0) without time zone,
+    updated_at timestamp(0) without time zone
+);
+
+
+ALTER TABLE public.permissions OWNER TO postgres;
+
+--
+-- TOC entry 234 (class 1259 OID 113724)
+-- Name: permissions_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.permissions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.permissions_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 5087 (class 0 OID 0)
+-- Dependencies: 234
+-- Name: permissions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.permissions_id_seq OWNED BY public.permissions.id;
+
+
+--
+-- TOC entry 250 (class 1259 OID 113852)
+-- Name: products; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.products (
+    id bigint NOT NULL,
+    category_id bigint NOT NULL,
+    brand_id bigint NOT NULL,
+    name character varying(255) NOT NULL,
+    slug character varying(255) NOT NULL,
+    product_code character varying(255),
+    description text,
+    price integer NOT NULL,
+    stock integer NOT NULL,
+    is_active boolean DEFAULT true NOT NULL,
+    created_at timestamp(0) without time zone,
+    updated_at timestamp(0) without time zone
+);
+
+
+ALTER TABLE public.products OWNER TO postgres;
+
+--
+-- TOC entry 249 (class 1259 OID 113851)
+-- Name: products_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.products_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.products_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 5088 (class 0 OID 0)
+-- Dependencies: 249
+-- Name: products_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.products_id_seq OWNED BY public.products.id;
+
+
+--
+-- TOC entry 240 (class 1259 OID 113768)
+-- Name: role_has_permissions; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.role_has_permissions (
+    permission_id bigint NOT NULL,
+    role_id bigint NOT NULL
+);
+
+
+ALTER TABLE public.role_has_permissions OWNER TO postgres;
+
+--
+-- TOC entry 237 (class 1259 OID 113736)
+-- Name: roles; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.roles (
+    id bigint NOT NULL,
+    name character varying(255) NOT NULL,
+    guard_name character varying(255) NOT NULL,
+    created_at timestamp(0) without time zone,
+    updated_at timestamp(0) without time zone
+);
+
+
+ALTER TABLE public.roles OWNER TO postgres;
+
+--
+-- TOC entry 236 (class 1259 OID 113735)
+-- Name: roles_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.roles_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.roles_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 5089 (class 0 OID 0)
+-- Dependencies: 236
+-- Name: roles_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.roles_id_seq OWNED BY public.roles.id;
+
+
+--
+-- TOC entry 220 (class 1259 OID 113634)
+-- Name: sessions; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.sessions (
+    id character varying(255) NOT NULL,
+    user_id bigint,
+    ip_address character varying(45),
+    user_agent text,
+    payload text NOT NULL,
+    last_activity integer NOT NULL
+);
+
+
+ALTER TABLE public.sessions OWNER TO postgres;
+
+--
+-- TOC entry 242 (class 1259 OID 113786)
+-- Name: user_details; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.user_details (
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    slug character varying(255) NOT NULL,
+    first_name character varying(255) NOT NULL,
+    last_name character varying(255) NOT NULL,
+    avatar character varying(255),
+    created_at timestamp(0) without time zone,
+    updated_at timestamp(0) without time zone,
+    black_listed boolean DEFAULT false NOT NULL
+);
+
+
+ALTER TABLE public.user_details OWNER TO postgres;
+
+--
+-- TOC entry 241 (class 1259 OID 113785)
+-- Name: user_details_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.user_details_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.user_details_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 5090 (class 0 OID 0)
+-- Dependencies: 241
+-- Name: user_details_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.user_details_id_seq OWNED BY public.user_details.id;
+
+
+--
+-- TOC entry 218 (class 1259 OID 113617)
+-- Name: users; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.users (
+    id bigint NOT NULL,
+    name character varying(255) NOT NULL,
+    email character varying(255) NOT NULL,
+    email_verified_at timestamp(0) without time zone,
+    password character varying(255) NOT NULL,
+    remember_token character varying(100),
+    created_at timestamp(0) without time zone,
+    updated_at timestamp(0) without time zone,
+    mobile character varying(255)
+);
+
+
+ALTER TABLE public.users OWNER TO postgres;
+
+--
+-- TOC entry 217 (class 1259 OID 113616)
+-- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.users_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.users_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 5091 (class 0 OID 0)
+-- Dependencies: 217
+-- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
+
+
+--
+-- TOC entry 4805 (class 2604 OID 113824)
+-- Name: brands id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.brands ALTER COLUMN id SET DEFAULT nextval('public.brands_id_seq'::regclass);
+
+
+--
+-- TOC entry 4807 (class 2604 OID 113836)
+-- Name: categories id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.categories ALTER COLUMN id SET DEFAULT nextval('public.categories_id_seq'::regclass);
+
+
+--
+-- TOC entry 4802 (class 2604 OID 113807)
+-- Name: customer_addresses id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.customer_addresses ALTER COLUMN id SET DEFAULT nextval('public.customer_addresses_id_seq'::regclass);
+
+
+--
+-- TOC entry 4795 (class 2604 OID 113678)
+-- Name: failed_jobs id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.failed_jobs ALTER COLUMN id SET DEFAULT nextval('public.failed_jobs_id_seq'::regclass);
+
+
+--
+-- TOC entry 4794 (class 2604 OID 113661)
+-- Name: jobs id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.jobs ALTER COLUMN id SET DEFAULT nextval('public.jobs_id_seq'::regclass);
+
+
+--
+-- TOC entry 4792 (class 2604 OID 113613)
+-- Name: migrations id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.migrations ALTER COLUMN id SET DEFAULT nextval('public.migrations_id_seq'::regclass);
+
+
+--
+-- TOC entry 4797 (class 2604 OID 113720)
+-- Name: oauth_personal_access_clients id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.oauth_personal_access_clients ALTER COLUMN id SET DEFAULT nextval('public.oauth_personal_access_clients_id_seq'::regclass);
+
+
+--
+-- TOC entry 4798 (class 2604 OID 113728)
+-- Name: permissions id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.permissions ALTER COLUMN id SET DEFAULT nextval('public.permissions_id_seq'::regclass);
+
+
+--
+-- TOC entry 4809 (class 2604 OID 113855)
+-- Name: products id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.products ALTER COLUMN id SET DEFAULT nextval('public.products_id_seq'::regclass);
+
+
+--
+-- TOC entry 4799 (class 2604 OID 113739)
+-- Name: roles id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.roles ALTER COLUMN id SET DEFAULT nextval('public.roles_id_seq'::regclass);
+
+
+--
+-- TOC entry 4800 (class 2604 OID 113789)
+-- Name: user_details id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.user_details ALTER COLUMN id SET DEFAULT nextval('public.user_details_id_seq'::regclass);
+
+
+--
+-- TOC entry 4793 (class 2604 OID 113620)
+-- Name: users id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
+
+
+--
+-- TOC entry 5069 (class 0 OID 113821)
+-- Dependencies: 246
+-- Data for Name: brands; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.brands (id, name, slug, logo, description, is_active, created_at, updated_at) FROM stdin;
+1	Nousbo	nousbo	/storage/uploads/brands//xXEBf9Qct31740238957-nousbo.png	\N	t	2025-02-22 21:12:37	2025-02-22 21:12:37
+12	Jones Ltd	jones-ltd	\N	\N	t	2025-02-22 22:55:56	2025-02-23 13:16:40
+4	Gibson-Schaefer	gibson-schaefer	\N	\N	t	2025-02-22 22:55:56	2025-02-22 22:55:56
+5	Harber Inc	harber-inc	\N	\N	t	2025-02-22 22:55:56	2025-02-22 22:55:56
+6	Reichel, Oberbrunner and Breitenberg	reichel-oberbrunner-and-breitenberg	\N	\N	t	2025-02-22 22:55:56	2025-02-22 22:55:56
+7	Blanda-Shields	blanda-shields	\N	\N	t	2025-02-22 22:55:56	2025-02-22 22:55:56
+8	Blanda Inc	blanda-inc	\N	\N	t	2025-02-22 22:55:56	2025-02-22 22:55:56
+9	Witting Inc	witting-inc	\N	\N	t	2025-02-22 22:55:56	2025-02-22 22:55:56
+10	Schmeler Inc	schmeler-inc	\N	\N	t	2025-02-22 22:55:56	2025-02-22 22:55:56
+11	Deckow-Anderson	deckow-anderson	\N	\N	t	2025-02-22 22:55:56	2025-02-22 22:55:56
+2	Miller	miller	/storage/uploads/brands//NuoTqjd1fj1740240215-miller.png		t	2025-02-22 21:33:35	2025-02-24 20:34:13
+13	Lueilwitz-Kilback	lueilwitz-kilback	\N	\N	t	2025-02-22 22:55:56	2025-02-22 23:19:39
+3	Yara	yara	/storage/uploads/brands//l8DKgH97uN1740240267-yara.png		t	2025-02-22 21:34:27	2025-02-24 22:48:07
+\.
+
+
+--
+-- TOC entry 5044 (class 0 OID 113643)
+-- Dependencies: 221
+-- Data for Name: cache; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.cache (key, value, expiration) FROM stdin;
+\.
+
+
+--
+-- TOC entry 5045 (class 0 OID 113650)
+-- Dependencies: 222
+-- Data for Name: cache_locks; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.cache_locks (key, owner, expiration) FROM stdin;
+\.
+
+
+--
+-- TOC entry 5071 (class 0 OID 113833)
+-- Dependencies: 248
+-- Data for Name: categories; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.categories (id, name, slug, parent_id, is_active, created_at, updated_at) FROM stdin;
+3	Organic Fertilizers	organic-fertilizers	\N	t	2025-02-24 21:09:09	2025-02-24 21:09:09
+5	Other	other	\N	t	2025-02-24 21:20:56	2025-02-24 21:20:56
+6	Insecticides	insecticides	1	t	2025-02-24 21:22:39	2025-02-24 21:22:39
+11	Compost	compost	3	t	2025-02-24 21:25:40	2025-02-24 21:25:40
+12	Manure	manure	3	t	2025-02-24 21:26:02	2025-02-24 21:26:02
+13	Bone Meal	bone-meal	3	t	2025-02-24 21:27:43	2025-02-24 21:27:43
+14	Blood Meal	blood-meal	3	t	2025-02-24 21:27:56	2025-02-24 21:27:56
+15	Green Manure	green-manure	3	t	2025-02-24 21:28:07	2025-02-24 21:28:07
+16	Herbicides	herbicides	1	t	2025-02-24 21:28:22	2025-02-24 21:28:22
+17	Fungicides	fungicides	1	t	2025-02-24 21:28:33	2025-02-24 21:28:33
+18	Rodenticides	rodenticides	1	t	2025-02-24 21:28:43	2025-02-24 21:28:43
+19	Nematicides	nematicides	1	t	2025-02-24 21:28:52	2025-02-24 21:28:52
+20	Bactericides	bactericides	1	t	2025-02-24 21:29:03	2025-02-24 21:29:03
+1	Pesticides	pesticides	\N	t	2025-02-24 21:02:01	2025-02-24 22:59:39
+2	Synthetic Fertilizers	synthetic-fertilizers	\N	t	2025-02-24 21:08:53	2025-02-24 23:11:14
+8	Phosphorus (P) Fertilizers	phosphorus-p-fertilizers	2	t	2025-02-24 21:23:35	2025-02-24 23:11:16
+10	NPK Fertilizers	npk-fertilizers	2	t	2025-02-24 21:25:26	2025-02-24 23:11:18
+7	Nitrogen (N) Fertilizers	nitrogen-n-fertilizers	2	t	2025-02-24 21:23:07	2025-02-24 23:11:18
+9	Potassium (K) Fertilizers	potassium-k-fertilizers	2	t	2025-02-24 21:24:10	2025-02-24 23:11:20
+\.
+
+
+--
+-- TOC entry 5067 (class 0 OID 113804)
+-- Dependencies: 244
+-- Data for Name: customer_addresses; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.customer_addresses (id, user_id, name, mobile, address_line_1, address_line_2, city, state, pincode, landmark, type, is_default, created_at, updated_at) FROM stdin;
+1	2	Felicia Crona IV	949.892.5930	1534 Travon Ways	\N	Nellatown	Iowa	58486	Suite 791	home	t	2025-02-22 11:44:39	2025-02-22 11:44:39
+2	3	Alexis Lynch	1-773-826-0068	95011 Beatty Stravenue Apt. 426	\N	East Maceyshire	Washington	72367	Apt. 160	home	t	2025-02-22 11:44:39	2025-02-22 11:44:39
+3	4	Hazel Lakin	1-276-832-6269	81319 Meagan Heights Apt. 800	\N	Noemystad	South Dakota	31892-5408	Apt. 550	home	t	2025-02-22 11:44:39	2025-02-22 11:44:39
+4	5	Dr. Madelynn McCullough I	706-596-9953	52255 Vickie Pines Apt. 615	\N	Port Ariel	New Hampshire	46848-0886	Apt. 291	home	t	2025-02-22 11:44:39	2025-02-22 11:44:39
+5	6	Verona Schiller	+1-283-806-6709	43015 Gennaro Estates Apt. 224	\N	West Leatha	California	84972-0337	Apt. 540	home	t	2025-02-22 11:44:40	2025-02-22 11:44:40
+6	7	Joesph Treutel	1-559-598-2917	651 Mertz Corners Apt. 299	\N	Wildermanfort	Texas	42355-1240	Suite 741	home	t	2025-02-22 11:44:40	2025-02-22 11:44:40
+7	8	Mason Buckridge	(559) 232-1152	3220 Pfannerstill Estates Apt. 251	\N	Tiffanyton	District of Columbia	22602	Apt. 092	home	t	2025-02-22 11:44:40	2025-02-22 11:44:40
+8	9	Dr. Terrell Paucek I	1-667-334-4515	273 Eino River	\N	North Kellyton	Maine	64035	Suite 289	home	t	2025-02-22 11:44:40	2025-02-22 11:44:40
+9	10	Mrs. Monica Turcotte V	254-212-7630	5453 Paucek Path Apt. 725	\N	Eddstad	Hawaii	04643-6735	Suite 718	home	t	2025-02-22 11:44:40	2025-02-22 11:44:40
+10	11	Ressie Okuneva	615.894.3300	4817 Jacky Way	\N	Krajcikborough	Iowa	12545-8454	Apt. 179	home	t	2025-02-22 11:44:41	2025-02-22 11:44:41
+11	12	Dr. Magnus Grady	+1-850-402-5020	442 Kacey Row	\N	Eribertomouth	Nevada	92287	Suite 166	home	t	2025-02-22 11:44:41	2025-02-22 11:44:41
+12	13	Bria Kemmer	(423) 873-8553	8784 Ferry Islands Apt. 843	\N	Koeppchester	Oregon	38111	Suite 370	home	t	2025-02-22 11:44:41	2025-02-22 11:44:41
+13	14	Branson Yost	(475) 341-4389	414 Freeda Forges Apt. 262	\N	Lake Allie	Ohio	82191	Suite 744	home	t	2025-02-22 11:44:41	2025-02-22 11:44:41
+14	15	Jerald Koelpin DDS	+17574291201	249 Velma Pine Suite 864	\N	Port Ted	Delaware	04625-1628	Apt. 563	home	t	2025-02-22 11:44:42	2025-02-22 11:44:42
+15	16	Mr. Joel Parker II	+1.660.683.3375	2360 Gaylord Ford	\N	East Eileenborough	South Dakota	81006	Suite 550	home	t	2025-02-22 11:44:42	2025-02-22 11:44:42
+16	17	Dr. Leslie Kirlin MD	+1 (920) 616-1380	82782 Price Camp Suite 717	\N	Port Juvenalfurt	Kentucky	44611	Suite 752	home	t	2025-02-22 11:44:42	2025-02-22 11:44:42
+17	18	Mrs. Ella Jacobson	+1.754.528.0830	34115 Gaylord Islands	\N	Hanebury	Connecticut	65981-2055	Apt. 516	home	t	2025-02-22 11:44:42	2025-02-22 11:44:42
+18	19	Prof. Adelia Halvorson	+1.831.727.3820	75114 Adele Meadows	\N	Port Nora	Alabama	38437-3828	Apt. 824	home	t	2025-02-22 11:44:42	2025-02-22 11:44:42
+19	20	Danial Morissette	+1.681.433.4842	961 Sebastian Springs	\N	South Alysha	Colorado	04056	Apt. 778	home	t	2025-02-22 11:44:43	2025-02-22 11:44:43
+20	21	Dr. Deonte Daugherty Sr.	(636) 907-4325	5457 Weissnat Locks Apt. 723	\N	North Jerryton	South Carolina	20929-1686	Apt. 042	home	t	2025-02-22 11:44:43	2025-02-22 11:44:43
+21	22	Mr. Hilton Mills	1-920-853-1451	2311 Kreiger Lane	\N	Port Santinaland	Iowa	34753	Suite 100	home	t	2025-02-22 11:44:43	2025-02-22 11:44:43
+22	23	Grayson Feest	+1-989-460-2204	95779 Abshire Walk	\N	Ezraton	Oklahoma	94850-4863	Suite 246	home	t	2025-02-22 11:44:43	2025-02-22 11:44:43
+23	24	Charley Tromp	1-786-279-5840	432 Sylvan Meadows Suite 368	\N	Port Issacton	Iowa	85639	Suite 550	home	t	2025-02-22 11:44:44	2025-02-22 11:44:44
+24	25	Vaughn Bradtke	+1 (234) 626-5081	507 Gerlach Route	\N	North Eleanorastad	Missouri	36344	Suite 278	home	t	2025-02-22 11:44:44	2025-02-22 11:44:44
+25	26	Trisha Wolff	(731) 851-9451	5836 Fatima Trail Suite 269	\N	South Domingomouth	Washington	75676-5835	Apt. 334	home	t	2025-02-22 11:44:44	2025-02-22 11:44:44
+26	27	Rubie Johns	530.309.5380	69072 Ondricka Estates	\N	Burleyland	Illinois	51478-0941	Suite 572	home	t	2025-02-22 11:44:44	2025-02-22 11:44:44
+27	28	Elyse Breitenberg	805.476.3352	489 Reinger Mountain	\N	Farrellburgh	California	26938-5032	Suite 910	home	t	2025-02-22 11:44:44	2025-02-22 11:44:44
+28	29	Dr. Giles Vandervort	715-559-5326	253 Rashawn Springs Suite 015	\N	West Cecilburgh	District of Columbia	94959-1993	Apt. 544	home	t	2025-02-22 11:44:45	2025-02-22 11:44:45
+29	30	Prof. Grant Kovacek DVM	(864) 749-8175	250 Jade Villages	\N	South Zachery	Texas	44458	Suite 687	home	t	2025-02-22 11:44:45	2025-02-22 11:44:45
+30	31	Kellen Collins	786-588-6150	747 Brandy Ville	\N	North Megane	Idaho	38555-9452	Apt. 436	home	t	2025-02-22 11:44:45	2025-02-22 11:44:45
+31	32	Carol Bruen	941-234-9801	43548 Delores Prairie Apt. 343	\N	Cristland	Michigan	63016-6492	Apt. 928	home	t	2025-02-22 11:44:45	2025-02-22 11:44:45
+32	33	Jackie Abernathy I	(360) 635-1152	5629 Kavon Cliff	\N	South Serenafurt	Minnesota	16685-8104	Apt. 169	home	t	2025-02-22 11:44:45	2025-02-22 11:44:45
+33	34	Dangelo Schoen	1-216-352-8267	71921 Hodkiewicz Plaza	\N	West Shana	Wyoming	18159-7827	Suite 293	home	t	2025-02-22 11:44:46	2025-02-22 11:44:46
+34	35	Mr. Collin Kuvalis DDS	+1 (484) 398-1517	25796 Hintz Crescent	\N	East Casandrashire	Texas	80089	Suite 364	home	t	2025-02-22 11:44:46	2025-02-22 11:44:46
+35	36	Nestor Lueilwitz Sr.	(559) 472-9971	871 Trey Mill Apt. 107	\N	McLaughlinstad	Utah	49088	Apt. 667	home	t	2025-02-22 11:44:46	2025-02-22 11:44:46
+36	37	Carlie Moore	870-854-2014	653 Jerrold Estates	\N	Davishaven	Arizona	00530	Suite 387	home	t	2025-02-22 11:44:46	2025-02-22 11:44:46
+37	38	Miss Lorena Nicolas I	+19412437714	41382 Sandrine Garden	\N	Rogahnshire	Alaska	28362-9123	Apt. 928	home	t	2025-02-22 11:44:47	2025-02-22 11:44:47
+38	39	Prof. Wellington Dibbert	+18477520762	99423 Jaydon Squares Apt. 327	\N	Lake Cullen	Virginia	60304-9870	Apt. 608	home	t	2025-02-22 11:44:47	2025-02-22 11:44:47
+39	40	Layla Cremin	(567) 426-3349	2918 Lebsack Loaf	\N	East Tatyana	Kansas	77103-7375	Apt. 325	home	t	2025-02-22 11:44:47	2025-02-22 11:44:47
+40	41	Ms. Adele Effertz	+17574941417	83083 Robel Glens Apt. 344	\N	South Alyssonfort	Missouri	67794-7152	Apt. 411	home	t	2025-02-22 11:44:47	2025-02-22 11:44:47
+41	42	Lelia Kertzmann	+1.915.346.1622	49476 Sanford Squares Suite 225	\N	Powlowskihaven	Colorado	09517-7969	Suite 322	home	t	2025-02-22 11:44:47	2025-02-22 11:44:47
+42	43	Tod Brakus	586-539-5474	952 Doyle Plaza Apt. 905	\N	Jerrellland	Mississippi	59944-1255	Suite 824	home	t	2025-02-22 11:44:48	2025-02-22 11:44:48
+43	44	Eddie Donnelly	+1.479.569.7585	13632 Davin Corners	\N	East Frederique	Minnesota	47611	Suite 475	home	t	2025-02-22 11:44:48	2025-02-22 11:44:48
+44	45	Clarabelle Predovic	(330) 723-8552	5579 Brisa Loop	\N	Port Heath	Minnesota	96983-6316	Apt. 384	home	t	2025-02-22 11:44:48	2025-02-22 11:44:48
+45	46	Lexie Larkin	(925) 501-1836	776 Beverly Mountain Suite 902	\N	West Ashlymouth	Michigan	95188-8838	Suite 707	home	t	2025-02-22 11:44:48	2025-02-22 11:44:48
+46	47	Verna Medhurst	(847) 360-2199	4743 Jerry Stravenue Apt. 415	\N	Port Virginiatown	Maryland	20106	Apt. 883	home	t	2025-02-22 11:44:49	2025-02-22 11:44:49
+47	48	Petra Ullrich DDS	1-352-686-9618	144 Rae Creek	\N	West Laurychester	Washington	81251	Apt. 232	home	t	2025-02-22 11:44:49	2025-02-22 11:44:49
+48	49	Bennie Hamill	+1-432-773-4699	58852 Jeromy Track	\N	Robertsborough	District of Columbia	76569-3005	Suite 845	home	t	2025-02-22 11:44:49	2025-02-22 11:44:49
+49	50	Dr. Jaycee Wisozk DDS	843-940-1796	412 Peter Freeway	\N	New Jermainstad	Montana	16213	Apt. 748	home	t	2025-02-22 11:44:49	2025-02-22 11:44:49
+50	51	Dr. Xavier Schaefer	1-585-251-0960	175 Cassin Underpass	\N	Lake Nicolasmouth	North Carolina	17600	Apt. 665	home	t	2025-02-22 11:44:49	2025-02-22 11:44:49
+\.
+
+
+--
+-- TOC entry 5050 (class 0 OID 113675)
+-- Dependencies: 227
+-- Data for Name: failed_jobs; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.failed_jobs (id, uuid, connection, queue, payload, exception, failed_at) FROM stdin;
+\.
+
+
+--
+-- TOC entry 5048 (class 0 OID 113667)
+-- Dependencies: 225
+-- Data for Name: job_batches; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.job_batches (id, name, total_jobs, pending_jobs, failed_jobs, failed_job_ids, options, cancelled_at, created_at, finished_at) FROM stdin;
+\.
+
+
+--
+-- TOC entry 5047 (class 0 OID 113658)
+-- Dependencies: 224
+-- Data for Name: jobs; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.jobs (id, queue, payload, attempts, reserved_at, available_at, created_at) FROM stdin;
+\.
+
+
+--
+-- TOC entry 5039 (class 0 OID 113610)
+-- Dependencies: 216
+-- Data for Name: migrations; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.migrations (id, migration, batch) FROM stdin;
+1	0001_01_01_000000_create_users_table	1
+2	0001_01_01_000001_create_cache_table	1
+3	0001_01_01_000002_create_jobs_table	1
+4	2025_02_19_231050_create_oauth_auth_codes_table	1
+5	2025_02_19_231051_create_oauth_access_tokens_table	1
+6	2025_02_19_231052_create_oauth_refresh_tokens_table	1
+7	2025_02_19_231053_create_oauth_clients_table	1
+8	2025_02_19_231054_create_oauth_personal_access_clients_table	1
+9	2025_02_19_231301_create_permission_tables	2
+10	2025_02_19_231544_add_mobile_to_users_table	3
+11	2025_02_20_211605_create_user_details_table	4
+12	2025_02_22_113140_create_customer_addresses_table	5
+13	2025_02_22_114650_create_brands_table	6
+14	2025_02_22_115014_create_categories_table	6
+15	2025_02_22_120626_add_black_listed_in_user_details_table	7
+16	2025_02_24_233551_create_products_table	8
+\.
+
+
+--
+-- TOC entry 5061 (class 0 OID 113746)
+-- Dependencies: 238
+-- Data for Name: model_has_permissions; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.model_has_permissions (permission_id, model_type, model_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 5062 (class 0 OID 113757)
+-- Dependencies: 239
+-- Data for Name: model_has_roles; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.model_has_roles (role_id, model_type, model_id) FROM stdin;
+1	App\\Models\\User	1
+4	App\\Models\\User	2
+4	App\\Models\\User	3
+4	App\\Models\\User	4
+4	App\\Models\\User	5
+4	App\\Models\\User	6
+4	App\\Models\\User	7
+4	App\\Models\\User	8
+4	App\\Models\\User	9
+4	App\\Models\\User	10
+4	App\\Models\\User	11
+4	App\\Models\\User	12
+4	App\\Models\\User	13
+4	App\\Models\\User	14
+4	App\\Models\\User	15
+4	App\\Models\\User	16
+4	App\\Models\\User	17
+4	App\\Models\\User	18
+4	App\\Models\\User	19
+4	App\\Models\\User	20
+4	App\\Models\\User	21
+4	App\\Models\\User	22
+4	App\\Models\\User	23
+4	App\\Models\\User	24
+4	App\\Models\\User	25
+4	App\\Models\\User	26
+4	App\\Models\\User	27
+4	App\\Models\\User	28
+4	App\\Models\\User	29
+4	App\\Models\\User	30
+4	App\\Models\\User	31
+4	App\\Models\\User	32
+4	App\\Models\\User	33
+4	App\\Models\\User	34
+4	App\\Models\\User	35
+4	App\\Models\\User	36
+4	App\\Models\\User	37
+4	App\\Models\\User	38
+4	App\\Models\\User	39
+4	App\\Models\\User	40
+4	App\\Models\\User	41
+4	App\\Models\\User	42
+4	App\\Models\\User	43
+4	App\\Models\\User	44
+4	App\\Models\\User	45
+4	App\\Models\\User	46
+4	App\\Models\\User	47
+4	App\\Models\\User	48
+4	App\\Models\\User	49
+4	App\\Models\\User	50
+4	App\\Models\\User	51
+\.
+
+
+--
+-- TOC entry 5052 (class 0 OID 113694)
+-- Dependencies: 229
+-- Data for Name: oauth_access_tokens; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.oauth_access_tokens (id, user_id, client_id, name, scopes, revoked, created_at, updated_at, expires_at) FROM stdin;
+9d0cd8abc6165dead544ee7ef932d2af9211705943b3c9c7cd73b93dc529e321c26fbe09b3d4ba5a	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-20 21:32:30	2025-02-20 21:32:31	2026-02-20 21:32:30
+b54b004bef403755fbf3c6a95a01374c537372f5c1e0f78e01851eb0b0aedfa7f74db94914882ddb	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-20 21:33:24	2025-02-20 21:33:25	2026-02-20 21:33:24
+b47bd5446905844be5a8f36a9e0a0d51e5104845a2c5c2ceef957b80866beac58e30f85db0415b49	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-20 21:34:20	2025-02-20 21:34:20	2026-02-20 21:34:20
+459e21e6e6a664adb1e7ba43d4007998182eed43814558278052c9c6b7fc6112b1e31d7f49bb89c5	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-20 21:59:01	2025-02-20 21:59:01	2026-02-20 21:59:01
+5c980ff045cbbfe1ddab5737d518583c2d09b4ec7ca6dcc31f356ffb3140387a91da74a30f69fee5	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-20 22:00:16	2025-02-20 22:00:16	2026-02-20 22:00:16
+6db1849ad18e5499db9ab43b19ac021d255f298facc4b3cf19361881554adf3984d55c1bbcb1513a	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-20 22:00:52	2025-02-20 22:00:52	2026-02-20 22:00:52
+457ecfbf1d7fe57d4f4715a8de30ef0a6daf1e44d7a21d27eaa26008b1cad96451c0a94484d87280	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-20 22:01:32	2025-02-20 22:01:32	2026-02-20 22:01:32
+1c0df96e5062c24113deb0f71f434fcb8db2efae8dee6837fce70d216b4231e861f08d9f3de2325b	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-20 22:01:44	2025-02-20 22:01:44	2026-02-20 22:01:44
+47a6926e0728f9af4e1a3b92cf8c559221475d82b9a771a1c6836e2ff646a5a31c5629ccbc5250c8	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-20 22:02:36	2025-02-20 22:02:36	2026-02-20 22:02:36
+483efb38b9bef6bec24ba2b62817e3fd4cc5740b78c28002b98a34bbda264d1d995c4424143c3eff	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-20 22:03:09	2025-02-20 22:03:09	2026-02-20 22:03:09
+8af1221a19c3051a27ad9041cf6758905ed8f260881ad86d6d1cf72c09ed5e64d3c00f68e261bf6d	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-20 22:05:48	2025-02-20 22:05:48	2026-02-20 22:05:48
+b45ba52e4b842ed078e11e6c48419ded2d9b04eca1289991a0bb5f0496a5c3cc4a2bafe1000c9fd9	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-20 22:06:21	2025-02-20 22:06:21	2026-02-20 22:06:21
+2a9b53aa77fee214047230203ed4bb7a99fa4e09da66c420e7d87cfafb0639975c06e127d89bf9c9	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-20 22:06:35	2025-02-20 22:06:35	2026-02-20 22:06:35
+6e27fe57c47f1d66cbfa4f797418ecfafe7be9e0b474e81db0d48bbe22b1ff796129ae509dd77c5f	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-20 22:06:45	2025-02-20 22:06:45	2026-02-20 22:06:45
+df3a38dc7a88c5351b6b869ae72c90a0545e0642b9aec0a1cf8fe7d97f81727f02251632aa3fce68	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-20 22:06:51	2025-02-20 22:06:51	2026-02-20 22:06:51
+132f2e7ac9c2410b10b7907105f9d0d8a4479e6595a8926b27d4cee7e3a069f251b9813bb1019fe3	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-20 22:07:02	2025-02-20 22:07:02	2026-02-20 22:07:02
+eeb5437113f5002220397533503cb6203877302afafedfbc06cf93992cce3e5ef5a5bc171c3338fb	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-20 22:07:17	2025-02-20 22:07:17	2026-02-20 22:07:17
+b7f5e1618c0ffd88bf3738d01276a265e8c77d914d4961e29b31d800f1a2d40c4d3e97e2027d9fb9	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-20 22:07:59	2025-02-20 22:07:59	2026-02-20 22:07:59
+3900777e1c72671ba3d40cfe0d3be3cba9b742777f7a8c26c90aebcea2b73e377cb0b2dfcfe46e3f	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-20 22:08:08	2025-02-20 22:08:08	2026-02-20 22:08:08
+d923cbd5ada94401389385639d5d02bd33ffff269d04d7df068ac4372df310dbac52e6f8f1cdbbc8	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-20 22:08:14	2025-02-20 22:08:14	2026-02-20 22:08:14
+a6bd4cf0af07006cead0b4e7325fbad51d943d541a1c7f680d6fc2203a2b075e021fd9bed2ce5005	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-20 22:10:51	2025-02-20 22:10:51	2026-02-20 22:10:51
+77e86193509799089831125950f2d25fbf1352552c5426cbe9a0b66c7cd83a4f4e6367fc0cb4ea9d	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-20 22:17:13	2025-02-20 22:17:13	2026-02-20 22:17:13
+84e05332eaefe72ea8f4f3564fa8b1bc42f097db4bc0199076c385abe92cc722ee192aa27e988a20	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-20 22:33:51	2025-02-20 22:33:51	2026-02-20 22:33:51
+7d6efd0ff50882425301819e32a275df0590e3f3e663673f9c48638fad66cb29deefa0384df81d0e	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-20 22:37:44	2025-02-20 22:37:44	2026-02-20 22:37:44
+8590b80b0f377202bc1948387ac599d53f244c592e8992eb49679170c9cc6cb71a29fbf8fb7ddcc1	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-20 22:38:33	2025-02-20 22:38:33	2026-02-20 22:38:33
+305cebe903f7645f71af938e4394d7ad7b63a83ee4e832de25fe029710e1550009d091493a1a7526	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-20 22:38:45	2025-02-20 22:38:45	2026-02-20 22:38:45
+b493a0a6fed05d85ecfda859db1617412a4acca12cc4efaf964d58a7f70c5eedeb89fe787087d26e	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-20 22:40:52	2025-02-20 22:40:52	2026-02-20 22:40:52
+fc87d1911c843489d875c989bf9828a290fa6d299a94c2fceb4ca586ba1b2c79682ad453a7e44ca8	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-20 22:41:12	2025-02-20 22:41:12	2026-02-20 22:41:12
+82ed6b1a77d691960bd9548f66a8c0f72ad2e58dfed76504b323c6802ca39c331ff00310121c9008	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-20 22:41:24	2025-02-20 22:41:24	2026-02-20 22:41:24
+dcf779e6577a1d0244b3190d3e440ba1a896d57958cda7911e5c017124a30074508a2b97d9f6a6aa	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-20 22:41:36	2025-02-20 22:41:36	2026-02-20 22:41:36
+fa301d39640bcc0d45974d65c725fe3dbaafedd7a4308f1ec411690309bc9d3ecdd34eaf6e61f601	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-20 22:43:11	2025-02-20 22:43:11	2026-02-20 22:43:11
+455c15816f3d6cf81688d8d2091c79448e73b23014829c56daa8d62c68ba896a9e04a3a473463510	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-20 22:44:36	2025-02-20 22:44:36	2026-02-20 22:44:36
+55d617d79957718bfbbab14467ad5721aad6eee7ffcee78b1a4cd112b7c3dd8a6107dab5c8b3e525	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-20 22:44:43	2025-02-20 22:44:43	2026-02-20 22:44:43
+6f511e90bf0c342310f87e13f398af7b18f612e59ebebaf485ebf3a4e192cd975929205193a55bd9	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-20 22:45:16	2025-02-20 22:45:16	2026-02-20 22:45:16
+b73536c22879a08b6f4e963f2d40639182115da4c02314373592d7de55ed18ef51c7df3027574933	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-20 22:45:16	2025-02-20 22:45:16	2026-02-20 22:45:16
+0fded1d89c1ab1ec199d2460e57dc8fd4071c93cfb12ea0671d70630eb9343e507e84a7c3061d79b	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-20 22:46:27	2025-02-20 22:46:27	2026-02-20 22:46:27
+87e6a7ca49caa73ac39cb6e0631540498e41cfa64f02d73846873a12252f25716f5bc46a96fdc396	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-20 22:47:28	2025-02-20 22:47:28	2026-02-20 22:47:28
+641afbc492a88c6f011907ac1aecc3cbb803438aaab8f332c2087c665536631b3079ecf4a8cbbc46	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-20 22:55:28	2025-02-20 22:55:28	2026-02-20 22:55:28
+1b0ee2829ac57ec4788b62881ab98f668923610c0f69098ed7fb107f1fadbc6cc89defe20589d657	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-20 22:56:01	2025-02-20 22:56:01	2026-02-20 22:56:01
+38dc417ac21d693df3165fe72868ae350146dc9aed711c5479f935c8a9fe77033359191eee92eaa0	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-20 22:56:20	2025-02-20 22:56:20	2026-02-20 22:56:20
+761f5833c3672bbff161f9c1381aae4da183c77eacf6a379aa44da17d7fdfb500988cce1eeb06088	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-20 23:15:19	2025-02-20 23:15:19	2026-02-20 23:15:19
+b5dbbab2b2f14d34f1cf7e4b4d29999c500f973f5bce2112fa2efde0e0f84c362802307439969a8f	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-20 23:18:36	2025-02-20 23:18:36	2026-02-20 23:18:36
+85c1409942194533b7009d9e1653022ab023f95f4d9f32ae783e8eea133bf00f071fbdce7cb2f28a	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-20 23:23:45	2025-02-20 23:23:45	2026-02-20 23:23:45
+b1b617010c6aa9c4e75cad8e399c99fe3bdf60f95d269ccf8c04d80ded56d9fe612d2a89b7585907	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-22 08:29:08	2025-02-22 08:29:10	2026-02-22 08:29:08
+eb7397815a8f708f743975fcf3d130185c2a2e199d498be6b08af0dca3e22f5d5ea56a7facd60ef1	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-22 08:42:58	2025-02-22 08:42:58	2026-02-22 08:42:58
+f0bc16bf011935d4851bbb02e2ebd490cd4f34554571ebd135d6712358e24b99c38ecbd318fc7781	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-22 08:43:22	2025-02-22 08:43:22	2026-02-22 08:43:22
+13455f48fa6739ea4ae77788105d7bc1e9c7184e21302f20024023f20fea0764271f2f90d312e9d1	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-22 08:51:23	2025-02-22 08:51:23	2026-02-22 08:51:23
+0230faf00d246195c6621e1f64131787d3cc15978b1f9d6168d4b820450adf753f3cf032ae71541d	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-22 08:51:30	2025-02-22 08:51:30	2026-02-22 08:51:30
+c74e3b2eb1988b38f6501069193e67538d78c94ee158dc331a46d90edfdf9d64498365395fb682d2	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-22 08:51:36	2025-02-22 08:51:36	2026-02-22 08:51:36
+d2d677d7b0be4ab2c45246e065748033d3c45ee3d751253566ba6c71363ee667a887e2d459bf30e6	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-22 08:51:48	2025-02-22 08:51:48	2026-02-22 08:51:48
+3f592563d3aa0acf70f508e1819fabece5380922c00ce49fc85e4797a3d637ec7689792b7dcb3e28	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-22 08:51:51	2025-02-22 08:51:51	2026-02-22 08:51:51
+6b82b3044534f3ba3190e79f46afe47b0ded6d71e877cf2eb205018adc928eefbf0379e0c483c904	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-22 08:52:21	2025-02-22 08:52:21	2026-02-22 08:52:21
+a0e034e11ccf59b367f9e115a2900ddc02f5a14278f4556aa93cbe1b0ca8cd814914bd98dce3c6e7	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-22 08:52:56	2025-02-22 08:52:56	2026-02-22 08:52:56
+5476ada2b31b7b1ccf299b7a51c6fb2ae203bb8a574b7263193c1a5b449246e9dc3bd641fa26f294	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-22 08:53:15	2025-02-22 08:53:15	2026-02-22 08:53:15
+7fb164c5d07466b3d65cdade2ed7bbd8ad8c523767e590f177eb2502d2dc8a25351a8a11447067b9	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-22 08:57:21	2025-02-22 08:57:21	2026-02-22 08:57:21
+d8e59f95afbd16cef9b700b93d1091edb54170632ef2edac8d6deac15d3f32fd196dbed7ba4bc617	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-22 08:57:25	2025-02-22 08:57:26	2026-02-22 08:57:25
+1c8b70b881b5b1d412943b2fd871771cc201bb73ec5a5e8be7bcce8e49b2046481db2f80a1f4492c	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-22 08:57:44	2025-02-22 08:57:44	2026-02-22 08:57:44
+ff5ef05862e6a81584f7ca445e040e42a8d89f4d2b104c5963678c0a375e8f98a5823935fcc118da	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-22 08:57:47	2025-02-22 08:57:47	2026-02-22 08:57:47
+162876c1cb2c59876be458860c2e09293155590e0b03c39668ef6e83785ff8a55acc978ab1185afe	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-22 08:57:49	2025-02-22 08:57:49	2026-02-22 08:57:49
+5c08594af26be822f8fb189c0dc680500d54b9a86e58e0ce3c69a26057ba9448b728a42a279c546b	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-22 08:57:52	2025-02-22 08:57:52	2026-02-22 08:57:52
+fb1dec141b0478a1829f1ea986e7da0577659cf8768009b6a837edf87c89b9333f4112b57bf2726c	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-22 08:57:54	2025-02-22 08:57:54	2026-02-22 08:57:54
+0022881b2a088e836bda66facf73f596f54dcb2c2f32e038f368c1b8d5ace3a8654d56e76b40759c	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-22 08:57:57	2025-02-22 08:57:57	2026-02-22 08:57:57
+883168e428405652fc7d6918735d1953c33b927fefcd1169d3e6ca0ab2362c9c2a8afc8d707f25cc	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-22 08:58:00	2025-02-22 08:58:00	2026-02-22 08:58:00
+5d7aa49d18ddfabb370d9fa94ffd8f96505d5aa0e854c50490bfb2f066fa673016e82678eb995116	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-22 08:58:37	2025-02-22 08:58:37	2026-02-22 08:58:37
+73f875ecc84f8a73819a512eca2cd1cbc113b919494d9f07cfd18396bcba4a63d2c2437c4c977042	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-22 08:58:39	2025-02-22 08:58:39	2026-02-22 08:58:39
+a5926284ebe971c37be7dad0322c127f635619969bcfb33f1161a1af6b11cb46d1e91d61c89c4246	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-22 09:00:30	2025-02-22 09:00:30	2026-02-22 09:00:30
+44f08db69cc1326668cf2ab2213f82e8454d4f744ae37fa6ab3792ee6885b2a47535830b671e55b7	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-22 09:00:32	2025-02-22 09:00:32	2026-02-22 09:00:32
+c0df643a26cbb8085ae3a3374c97e648377a556267de3ea98d1c83a8d4a85c14b3cf0aacab3a7f80	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-22 09:00:34	2025-02-22 09:00:34	2026-02-22 09:00:34
+7e2860b2190e2c3718ee196a233a4bcecd94571a0207c3e68ad4b1c60c052bb48a86482f9e8dc9c2	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-22 09:00:36	2025-02-22 09:00:36	2026-02-22 09:00:36
+33163c5d88a428d6c69ed240fc031e4410717d0a93ad642c96ec7cb86465c4cce42b5e67c308c154	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-22 09:01:15	2025-02-22 09:01:15	2026-02-22 09:01:15
+9c0a2de0c4221a2a5f3808e488dd8ee5361824f64c6ee94c517ab3cbb6114f3d39a599ae5acfd67c	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-22 09:01:18	2025-02-22 09:01:18	2026-02-22 09:01:18
+9d6d2651907f7ed2aed3cf3cdb53505ae8eeda4dc521ccf78894d2962656f8c35e5f94b543398be9	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-22 09:01:33	2025-02-22 09:01:33	2026-02-22 09:01:33
+173424db94ddcdbf99a81d0db438e32b3699b5b5cc5cbd1c916bda0f95ad2325b780c9a1831ab2c6	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-22 09:01:40	2025-02-22 09:01:40	2026-02-22 09:01:40
+256fa4d4ca7b043d0fb2cf3c5e72e32f2629b2c2ac0303f6315056c9cb2f7649ea89702ab31f2c52	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-22 09:01:44	2025-02-22 09:01:44	2026-02-22 09:01:44
+6be9330cc4db745f55ec8c56b05109a5d19efedfaef27a6122d206dfb33bf49826a24182c27a14cb	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-22 09:02:02	2025-02-22 09:02:02	2026-02-22 09:02:02
+2d74b4fa7109323285e86ae8a5acd87d0400ec7ec64f01d3f0e8301aa6f8a31437a75db47bac8c3f	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-22 09:02:14	2025-02-22 09:02:14	2026-02-22 09:02:14
+a3cf58290f6014aab1f1e2ea627a8b90b96248bf0885424abea1c0f6b8470051ea6048689d9d3f2d	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-22 09:02:21	2025-02-22 09:02:21	2026-02-22 09:02:21
+ff087ea3bbe100e7e805b6444621791df03b356e1884455c7fd5a0578507e708b83d2d0a0da59a2a	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-23 09:35:03	2025-02-23 09:35:03	2026-02-23 09:35:03
+48ac536f28238ae4b5347910da682ea47e0f3720896e36aa78b8de6d04507eb0205ad7c41df69d63	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	t	2025-02-22 16:49:10	2025-02-23 00:11:32	2026-02-22 16:49:10
+28e47cfa183f868786dd729e79e83763b630922a4d07c4345219ae25c8c4097881d833811070a3ee	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-24 21:54:49	2025-02-24 21:54:49	2026-02-24 21:54:49
+aebb1fd530f196b07b75775ddbaabb24cd3b1496b8284f23dd4a1e2d8f61f5c4a55b8ba2e7a10d60	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	t	2025-02-24 20:24:38	2025-02-24 21:54:48	2026-02-24 20:24:38
+4b70f75bf3c4a10651e25531ec50cadb7853d903341fae760524a23094483baad97b8c3affd2c2e7	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	f	2025-02-24 22:20:43	2025-02-24 22:20:43	2026-02-24 22:20:43
+5b9ea186cd652ddc257407ea9b70d27ababdfa0f296a1572bd4d2d67b3bcd819dee1d2bc74fb4da7	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	t	2025-02-24 22:20:56	2025-02-24 22:45:56	2026-02-24 22:20:56
+ee3e25395f1142b32f90effb7b84aa4194e7cbd41aa7326878b0bf91becaefa0a2c060cc53c87458	1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	authToken	[]	t	2025-02-24 22:46:03	2025-02-24 23:44:40	2026-02-24 22:46:03
+\.
+
+
+--
+-- TOC entry 5051 (class 0 OID 113686)
+-- Dependencies: 228
+-- Data for Name: oauth_auth_codes; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.oauth_auth_codes (id, user_id, client_id, scopes, revoked, expires_at) FROM stdin;
+\.
+
+
+--
+-- TOC entry 5054 (class 0 OID 113708)
+-- Dependencies: 231
+-- Data for Name: oauth_clients; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.oauth_clients (id, user_id, name, secret, provider, redirect, personal_access_client, password_client, revoked, created_at, updated_at) FROM stdin;
+9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	\N	Laravel Personal Access Client	ZyCVTc5z9jylVGziHZ8Iq93waxYLN36dvw1MNyZl	\N	http://localhost	t	f	f	2025-02-19 23:10:49	2025-02-19 23:10:49
+9e4039cf-51af-4153-8154-eaaaa50b0ec3	\N	Laravel Password Grant Client	IOtrisfF5HyTFQUtYop9VQ6fUPz3tMW5HUeJuDvh	users	http://localhost	f	t	f	2025-02-19 23:10:49	2025-02-19 23:10:49
+\.
+
+
+--
+-- TOC entry 5056 (class 0 OID 113717)
+-- Dependencies: 233
+-- Data for Name: oauth_personal_access_clients; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.oauth_personal_access_clients (id, client_id, created_at, updated_at) FROM stdin;
+1	9e4039cf-4d5c-4e2d-9a1c-5c8ad7aff39d	2025-02-19 23:10:49	2025-02-19 23:10:49
+\.
+
+
+--
+-- TOC entry 5053 (class 0 OID 113702)
+-- Dependencies: 230
+-- Data for Name: oauth_refresh_tokens; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.oauth_refresh_tokens (id, access_token_id, revoked, expires_at) FROM stdin;
+\.
+
+
+--
+-- TOC entry 5042 (class 0 OID 113627)
+-- Dependencies: 219
+-- Data for Name: password_reset_tokens; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.password_reset_tokens (email, token, created_at) FROM stdin;
+\.
+
+
+--
+-- TOC entry 5058 (class 0 OID 113725)
+-- Dependencies: 235
+-- Data for Name: permissions; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.permissions (id, name, guard_name, created_at, updated_at) FROM stdin;
+\.
+
+
+--
+-- TOC entry 5073 (class 0 OID 113852)
+-- Dependencies: 250
+-- Data for Name: products; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.products (id, category_id, brand_id, name, slug, product_code, description, price, stock, is_active, created_at, updated_at) FROM stdin;
+\.
+
+
+--
+-- TOC entry 5063 (class 0 OID 113768)
+-- Dependencies: 240
+-- Data for Name: role_has_permissions; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.role_has_permissions (permission_id, role_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 5060 (class 0 OID 113736)
+-- Dependencies: 237
+-- Data for Name: roles; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.roles (id, name, guard_name, created_at, updated_at) FROM stdin;
+1	super admin	web	2025-02-19 23:15:08	2025-02-19 23:15:08
+2	admin	web	2025-02-19 23:15:08	2025-02-19 23:15:08
+3	user	web	2025-02-19 23:15:08	2025-02-19 23:15:08
+4	customer	web	2025-02-19 23:15:08	2025-02-19 23:15:08
+\.
+
+
+--
+-- TOC entry 5043 (class 0 OID 113634)
+-- Dependencies: 220
+-- Data for Name: sessions; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.sessions (id, user_id, ip_address, user_agent, payload, last_activity) FROM stdin;
+qstkmmBRdiEBpAhRHmd4bhskvI2I0XjbJfaf3kYX	\N	127.0.0.1	Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36	YToyOntzOjY6Il90b2tlbiI7czo0MDoiSURubzJlMjQ4bjFIaHUxMEFvbHVRNEd4elhtUTh4aklESmRYOHpaaiI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==	1740067504
+\.
+
+
+--
+-- TOC entry 5065 (class 0 OID 113786)
+-- Dependencies: 242
+-- Data for Name: user_details; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.user_details (id, user_id, slug, first_name, last_name, avatar, created_at, updated_at, black_listed) FROM stdin;
+1	1	souvik-nag	Souvik	Nag	\N	2025-02-20 21:30:08	2025-02-20 21:30:08	f
+2	2	felicia-crona-iv	Felicia	Crona IV	https://via.placeholder.com/200x200.png/0000cc?text=harum	2025-02-22 11:44:38	2025-02-22 11:44:38	f
+3	3	alexis-lynch	Alexis	Lynch	https://via.placeholder.com/200x200.png/0099ee?text=voluptatem	2025-02-22 11:44:39	2025-02-22 11:44:39	f
+4	4	hazel-lakin	Hazel	Lakin	https://via.placeholder.com/200x200.png/00aa88?text=dolore	2025-02-22 11:44:39	2025-02-22 11:44:39	f
+5	5	dr-madelynn-mccullough-i	Dr.	Madelynn McCullough I	https://via.placeholder.com/200x200.png/003333?text=omnis	2025-02-22 11:44:39	2025-02-22 11:44:39	f
+6	6	verona-schiller	Verona	Schiller	https://via.placeholder.com/200x200.png/002277?text=cupiditate	2025-02-22 11:44:40	2025-02-22 11:44:40	f
+7	7	joesph-treutel	Joesph	Treutel	https://via.placeholder.com/200x200.png/000066?text=eligendi	2025-02-22 11:44:40	2025-02-22 11:44:40	f
+8	8	mason-buckridge	Mason	Buckridge	https://via.placeholder.com/200x200.png/00aabb?text=inventore	2025-02-22 11:44:40	2025-02-22 11:44:40	f
+9	9	dr-terrell-paucek-i	Dr.	Terrell Paucek I	https://via.placeholder.com/200x200.png/0055ee?text=delectus	2025-02-22 11:44:40	2025-02-22 11:44:40	f
+10	10	mrs-monica-turcotte-v	Mrs.	Monica Turcotte V	https://via.placeholder.com/200x200.png/009944?text=veniam	2025-02-22 11:44:40	2025-02-22 11:44:40	f
+11	11	ressie-okuneva	Ressie	Okuneva	https://via.placeholder.com/200x200.png/0000bb?text=velit	2025-02-22 11:44:41	2025-02-22 11:44:41	f
+12	12	dr-magnus-grady	Dr.	Magnus Grady	https://via.placeholder.com/200x200.png/00aadd?text=facilis	2025-02-22 11:44:41	2025-02-22 11:44:41	f
+13	13	bria-kemmer	Bria	Kemmer	https://via.placeholder.com/200x200.png/0088bb?text=qui	2025-02-22 11:44:41	2025-02-22 11:44:41	f
+14	14	branson-yost	Branson	Yost	https://via.placeholder.com/200x200.png/007766?text=qui	2025-02-22 11:44:41	2025-02-22 11:44:41	f
+15	15	jerald-koelpin-dds	Jerald	Koelpin DDS	https://via.placeholder.com/200x200.png/008877?text=quidem	2025-02-22 11:44:42	2025-02-22 11:44:42	f
+16	16	mr-joel-parker-ii	Mr.	Joel Parker II	https://via.placeholder.com/200x200.png/00dd44?text=enim	2025-02-22 11:44:42	2025-02-22 11:44:42	f
+17	17	dr-leslie-kirlin-md	Dr.	Leslie Kirlin MD	https://via.placeholder.com/200x200.png/00aacc?text=accusantium	2025-02-22 11:44:42	2025-02-22 11:44:42	f
+18	18	mrs-ella-jacobson	Mrs.	Ella Jacobson	https://via.placeholder.com/200x200.png/005588?text=sit	2025-02-22 11:44:42	2025-02-22 11:44:42	f
+19	19	prof-adelia-halvorson	Prof.	Adelia Halvorson	https://via.placeholder.com/200x200.png/00bb77?text=consequatur	2025-02-22 11:44:42	2025-02-22 11:44:42	f
+20	20	danial-morissette	Danial	Morissette	https://via.placeholder.com/200x200.png/002255?text=numquam	2025-02-22 11:44:43	2025-02-22 11:44:43	f
+21	21	dr-deonte-daugherty-sr	Dr.	Deonte Daugherty Sr.	https://via.placeholder.com/200x200.png/00ff44?text=aliquid	2025-02-22 11:44:43	2025-02-22 11:44:43	f
+22	22	mr-hilton-mills	Mr.	Hilton Mills	https://via.placeholder.com/200x200.png/00aabb?text=odit	2025-02-22 11:44:43	2025-02-22 11:44:43	f
+23	23	grayson-feest	Grayson	Feest	https://via.placeholder.com/200x200.png/0033dd?text=aut	2025-02-22 11:44:43	2025-02-22 11:44:43	f
+24	24	charley-tromp	Charley	Tromp	https://via.placeholder.com/200x200.png/00ff77?text=dignissimos	2025-02-22 11:44:44	2025-02-22 11:44:44	f
+25	25	vaughn-bradtke	Vaughn	Bradtke	https://via.placeholder.com/200x200.png/008800?text=alias	2025-02-22 11:44:44	2025-02-22 11:44:44	f
+26	26	trisha-wolff	Trisha	Wolff	https://via.placeholder.com/200x200.png/00aaaa?text=deleniti	2025-02-22 11:44:44	2025-02-22 11:44:44	f
+27	27	rubie-johns	Rubie	Johns	https://via.placeholder.com/200x200.png/009988?text=ut	2025-02-22 11:44:44	2025-02-22 11:44:44	f
+28	28	elyse-breitenberg	Elyse	Breitenberg	https://via.placeholder.com/200x200.png/002266?text=odio	2025-02-22 11:44:44	2025-02-22 11:44:44	f
+29	29	dr-giles-vandervort	Dr.	Giles Vandervort	https://via.placeholder.com/200x200.png/00cc00?text=itaque	2025-02-22 11:44:45	2025-02-22 11:44:45	f
+30	30	prof-grant-kovacek-dvm	Prof.	Grant Kovacek DVM	https://via.placeholder.com/200x200.png/001177?text=et	2025-02-22 11:44:45	2025-02-22 11:44:45	f
+31	31	kellen-collins	Kellen	Collins	https://via.placeholder.com/200x200.png/003366?text=magnam	2025-02-22 11:44:45	2025-02-22 11:44:45	f
+32	32	carol-bruen	Carol	Bruen	https://via.placeholder.com/200x200.png/00dd66?text=aspernatur	2025-02-22 11:44:45	2025-02-22 11:44:45	f
+33	33	jackie-abernathy-i	Jackie	Abernathy I	https://via.placeholder.com/200x200.png/00cc88?text=ut	2025-02-22 11:44:45	2025-02-22 11:44:45	f
+34	34	dangelo-schoen	Dangelo	Schoen	https://via.placeholder.com/200x200.png/0088ff?text=recusandae	2025-02-22 11:44:46	2025-02-22 11:44:46	f
+35	35	mr-collin-kuvalis-dds	Mr.	Collin Kuvalis DDS	https://via.placeholder.com/200x200.png/007777?text=ullam	2025-02-22 11:44:46	2025-02-22 11:44:46	f
+36	36	nestor-lueilwitz-sr	Nestor	Lueilwitz Sr.	https://via.placeholder.com/200x200.png/00ff55?text=quo	2025-02-22 11:44:46	2025-02-22 11:44:46	f
+37	37	carlie-moore	Carlie	Moore	https://via.placeholder.com/200x200.png/00ee22?text=eveniet	2025-02-22 11:44:46	2025-02-22 11:44:46	f
+38	38	miss-lorena-nicolas-i	Miss	Lorena Nicolas I	https://via.placeholder.com/200x200.png/002277?text=voluptates	2025-02-22 11:44:47	2025-02-22 11:44:47	f
+39	39	prof-wellington-dibbert	Prof.	Wellington Dibbert	https://via.placeholder.com/200x200.png/009922?text=labore	2025-02-22 11:44:47	2025-02-22 11:44:47	f
+40	40	layla-cremin	Layla	Cremin	https://via.placeholder.com/200x200.png/008899?text=officiis	2025-02-22 11:44:47	2025-02-22 11:44:47	f
+41	41	ms-adele-effertz	Ms.	Adele Effertz	https://via.placeholder.com/200x200.png/00ccaa?text=blanditiis	2025-02-22 11:44:47	2025-02-22 11:44:47	f
+42	42	lelia-kertzmann	Lelia	Kertzmann	https://via.placeholder.com/200x200.png/005555?text=dolorem	2025-02-22 11:44:47	2025-02-22 11:44:47	f
+43	43	tod-brakus	Tod	Brakus	https://via.placeholder.com/200x200.png/00aa22?text=rerum	2025-02-22 11:44:48	2025-02-22 11:44:48	f
+44	44	eddie-donnelly	Eddie	Donnelly	https://via.placeholder.com/200x200.png/00aaff?text=autem	2025-02-22 11:44:48	2025-02-22 11:44:48	f
+45	45	clarabelle-predovic	Clarabelle	Predovic	https://via.placeholder.com/200x200.png/008899?text=totam	2025-02-22 11:44:48	2025-02-22 11:44:48	f
+46	46	lexie-larkin	Lexie	Larkin	https://via.placeholder.com/200x200.png/008899?text=perferendis	2025-02-22 11:44:48	2025-02-22 11:44:48	f
+47	47	verna-medhurst	Verna	Medhurst	https://via.placeholder.com/200x200.png/0011cc?text=eaque	2025-02-22 11:44:49	2025-02-22 11:44:49	f
+48	48	petra-ullrich-dds	Petra	Ullrich DDS	https://via.placeholder.com/200x200.png/003311?text=libero	2025-02-22 11:44:49	2025-02-22 11:44:49	f
+49	49	bennie-hamill	Bennie	Hamill	https://via.placeholder.com/200x200.png/000033?text=facere	2025-02-22 11:44:49	2025-02-22 11:44:49	f
+50	50	dr-jaycee-wisozk-dds	Dr.	Jaycee Wisozk DDS	https://via.placeholder.com/200x200.png/00eeaa?text=et	2025-02-22 11:44:49	2025-02-22 11:44:49	f
+51	51	dr-xavier-schaefer	Dr.	Xavier Schaefer	https://via.placeholder.com/200x200.png/001111?text=a	2025-02-22 11:44:49	2025-02-22 11:44:49	f
+\.
+
+
+--
+-- TOC entry 5041 (class 0 OID 113617)
+-- Dependencies: 218
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.users (id, name, email, email_verified_at, password, remember_token, created_at, updated_at, mobile) FROM stdin;
+1	Souvik Nag	souvik@test.com	2025-02-19 23:16:54	$2y$12$AfJ7kHjaJSHa3tGWuDUs7eqT4zqyi3klkOVEcXAPqS.Rk2LdlzaWC	ORnbVpBBYe	2025-02-19 23:16:54	2025-02-19 23:16:54	8335906101
+2	Felicia Crona IV	lemmerich@hyatt.com	2025-02-22 11:44:38	$2y$12$KhaKeygElt/D3ohQFsA.gOGKqAqF/DiNf.0wtDzI2Fm7p1bwqZfv.	\N	2025-02-22 11:44:38	2025-02-22 11:44:38	949.892.5930
+3	Alexis Lynch	ibednar@hotmail.com	2025-02-22 11:44:39	$2y$12$L.h3lTCJsZNOIBMublvYNOb0WwmGjVnSYPOnlosQ8D/6Go.l7l7hW	\N	2025-02-22 11:44:39	2025-02-22 11:44:39	1-773-826-0068
+4	Hazel Lakin	nedra56@yahoo.com	2025-02-22 11:44:39	$2y$12$0zj0FwAlKCjsSKih0QxUZ.O6wI0kH6OnMkRyr2ktdU58cdRf5lDc.	\N	2025-02-22 11:44:39	2025-02-22 11:44:39	1-276-832-6269
+5	Dr. Madelynn McCullough I	keanu02@yahoo.com	2025-02-22 11:44:39	$2y$12$Z0kDItkJL5TEPDdbuGfUE.HiBKstCexa8Atl8FAfUTgMHciAUjVMO	\N	2025-02-22 11:44:39	2025-02-22 11:44:39	706-596-9953
+6	Verona Schiller	ulices.pfeffer@damore.com	2025-02-22 11:44:39	$2y$12$4IKCxpZAKwUVEo35dDp66eji3KxFVzmxWLShWxOqWJ6Lkw6jY9Cce	\N	2025-02-22 11:44:40	2025-02-22 11:44:40	+1-283-806-6709
+7	Joesph Treutel	lemmerich@miller.com	2025-02-22 11:44:40	$2y$12$9VDhniTko/4EwQxZypmHhub.rPcmlZ8jTMLH/4REn2LUlA0W/aQ4y	\N	2025-02-22 11:44:40	2025-02-22 11:44:40	1-559-598-2917
+8	Mason Buckridge	rowe.kailee@lindgren.com	2025-02-22 11:44:40	$2y$12$ED3M6hJiGRcFdnrFj/E/yOVRm6wGyXmmONewyS3XXjxQhN46lhhxW	\N	2025-02-22 11:44:40	2025-02-22 11:44:40	(559) 232-1152
+9	Dr. Terrell Paucek I	roslyn93@marquardt.biz	2025-02-22 11:44:40	$2y$12$FxwOhAKin/8bb03wAssr.Ob6KdHeyWSYu88JzCRA4.vFBp1l/GhGq	\N	2025-02-22 11:44:40	2025-02-22 11:44:40	1-667-334-4515
+10	Mrs. Monica Turcotte V	kdonnelly@kovacek.com	2025-02-22 11:44:40	$2y$12$a6is8JspJySwA24tQKPCMe64hl/ucvej3uwGe4UK24S7LYrd.lxfC	\N	2025-02-22 11:44:40	2025-02-22 11:44:40	254-212-7630
+11	Ressie Okuneva	predovic.alexandro@gmail.com	2025-02-22 11:44:40	$2y$12$giTWEM0sMW5YcgIF4T/I3uqXvkzyWR0mClv13QOZsO4TC02fMJ3oG	\N	2025-02-22 11:44:41	2025-02-22 11:44:41	615.894.3300
+12	Dr. Magnus Grady	towne.chase@bahringer.com	2025-02-22 11:44:41	$2y$12$0Doda3diuUz7ORaizkr6E.vSeTD7AzveHv8EzD4vS/4RetnYDvvUS	\N	2025-02-22 11:44:41	2025-02-22 11:44:41	+1-850-402-5020
+13	Bria Kemmer	collier.gregory@thiel.org	2025-02-22 11:44:41	$2y$12$CIRtmuLxdHnUQJs6Nc1e3uM5R7hzbY1M7HmhnKi/E5V5aLOqZikru	\N	2025-02-22 11:44:41	2025-02-22 11:44:41	(423) 873-8553
+14	Branson Yost	oscar.block@cruickshank.net	2025-02-22 11:44:41	$2y$12$iFfLj5zRjfP3eNTgel.//.jbm57ydZika0T.GO1WL/wlwHwtt9rqO	\N	2025-02-22 11:44:41	2025-02-22 11:44:41	(475) 341-4389
+15	Jerald Koelpin DDS	dorothy86@breitenberg.org	2025-02-22 11:44:41	$2y$12$E82rg6ChlCC1owkqLPB/yudMQt0pwdYFg7hfU35.O2B82/3IOPuGS	\N	2025-02-22 11:44:42	2025-02-22 11:44:42	+17574291201
+16	Mr. Joel Parker II	mmitchell@gmail.com	2025-02-22 11:44:42	$2y$12$gw/68CMr5zRKPSRVVfbfbO6x3FmDVcmFa47fQRqgaRaSj/o5lTWpm	\N	2025-02-22 11:44:42	2025-02-22 11:44:42	+1.660.683.3375
+17	Dr. Leslie Kirlin MD	frodriguez@gmail.com	2025-02-22 11:44:42	$2y$12$BcVAFbalbDH72P2.SCjC3ekhtOQPqEHYu6ZmUjMm5cJrc9dIRjCoO	\N	2025-02-22 11:44:42	2025-02-22 11:44:42	+1 (920) 616-1380
+18	Mrs. Ella Jacobson	homenick.nichole@hotmail.com	2025-02-22 11:44:42	$2y$12$bdEtxJyHfxIJNP0zNEB6quG9LwUJ0ZkJwdWVCNcR89hlI6N3GokIq	\N	2025-02-22 11:44:42	2025-02-22 11:44:42	+1.754.528.0830
+19	Prof. Adelia Halvorson	oma02@treutel.com	2025-02-22 11:44:42	$2y$12$YahahHa7nwMw3QlGbSc3z.zno75FryyXmsgarjgjSPj6/i3h9JEPy	\N	2025-02-22 11:44:42	2025-02-22 11:44:42	+1.831.727.3820
+20	Danial Morissette	gloria.blanda@hotmail.com	2025-02-22 11:44:42	$2y$12$xT2sY4ME5YYbcnjJ6D1bxeJ57.ya.ZeeFPHX6eEBVSqrYO0BYH3bG	\N	2025-02-22 11:44:43	2025-02-22 11:44:43	+1.681.433.4842
+21	Dr. Deonte Daugherty Sr.	rachael20@hotmail.com	2025-02-22 11:44:43	$2y$12$pW83XxxajyEBiJ56C.xel.fq381y5sjZ8HTWTfpaDHfZS0kgu1KSW	\N	2025-02-22 11:44:43	2025-02-22 11:44:43	(636) 907-4325
+22	Mr. Hilton Mills	tsawayn@marvin.com	2025-02-22 11:44:43	$2y$12$NEfqapDe4qiy0GnY4ytFv.z9UdhB9n1ZMWF5S8i1PJ6ZKeGK.L4bq	\N	2025-02-22 11:44:43	2025-02-22 11:44:43	1-920-853-1451
+23	Grayson Feest	obayer@hotmail.com	2025-02-22 11:44:43	$2y$12$.BIYsFzqLvGYy8uMZ8vkmuZZT/E4162B1.NLXSG63EtdzGu5VCp0y	\N	2025-02-22 11:44:43	2025-02-22 11:44:43	+1-989-460-2204
+24	Charley Tromp	gmclaughlin@hotmail.com	2025-02-22 11:44:43	$2y$12$e8uW/cX.T87AhvGwQGSQyOH.4yKx0oO2IL6F2ZeHVVMHuV0kgRobe	\N	2025-02-22 11:44:44	2025-02-22 11:44:44	1-786-279-5840
+25	Vaughn Bradtke	kutch.albertha@leffler.com	2025-02-22 11:44:44	$2y$12$DWS4wesZF95pDrmTaPGP5.Ou2yoFO98wpsOX.e0c4S9yh4l31oPqO	\N	2025-02-22 11:44:44	2025-02-22 11:44:44	+1 (234) 626-5081
+26	Trisha Wolff	kassulke.reggie@streich.biz	2025-02-22 11:44:44	$2y$12$moSouXn/cNiJ3NXwgQHnkOrQIh8FwsuT47.VewWIuiJ2EOECTUsEG	\N	2025-02-22 11:44:44	2025-02-22 11:44:44	(731) 851-9451
+27	Rubie Johns	marlin.howe@yahoo.com	2025-02-22 11:44:44	$2y$12$JdAo.9aC33ImdesXsyUy.ONo3c0k1G.Yzs/7rAMwrBi90HvMRNG82	\N	2025-02-22 11:44:44	2025-02-22 11:44:44	530.309.5380
+28	Elyse Breitenberg	dianna.keeling@gmail.com	2025-02-22 11:44:44	$2y$12$SK7.o8UZJERHMnYEVFy8OuKKVq92GzwR0fmtLu4iNxfxj2NyD5Che	\N	2025-02-22 11:44:44	2025-02-22 11:44:44	805.476.3352
+29	Dr. Giles Vandervort	stehr.zena@schaden.info	2025-02-22 11:44:44	$2y$12$ynAXWDo1ugMk2FbPRjpC9euRh7ApYfP5fN/2MLWNdBjtLq4bs4pZm	\N	2025-02-22 11:44:45	2025-02-22 11:44:45	715-559-5326
+30	Prof. Grant Kovacek DVM	dayna83@hotmail.com	2025-02-22 11:44:45	$2y$12$rcBoulrg9qz98F8TbnwR.eMEhbkOtRJe5lG5AIANcI/MEk7M5zhaa	\N	2025-02-22 11:44:45	2025-02-22 11:44:45	(864) 749-8175
+31	Kellen Collins	gerson.russel@vandervort.com	2025-02-22 11:44:45	$2y$12$47l2pNEROQRi7.vWAxGQdO/ZF.tDjdKRoU5ZyomrC16RjHOWu1vZO	\N	2025-02-22 11:44:45	2025-02-22 11:44:45	786-588-6150
+32	Carol Bruen	bkrajcik@conn.biz	2025-02-22 11:44:45	$2y$12$9si72DLu7m6O5OZnDCLpj.FoljA/w2ad3V7rHgUXwrRzqwcW0L2..	\N	2025-02-22 11:44:45	2025-02-22 11:44:45	941-234-9801
+33	Jackie Abernathy I	nstehr@marks.net	2025-02-22 11:44:45	$2y$12$hzQtMidF/98iDz9m3Rnyk.NmGM9mk5kcQIexKv4b9//LPTSiXWXxi	\N	2025-02-22 11:44:45	2025-02-22 11:44:45	(360) 635-1152
+34	Dangelo Schoen	alexander.dickinson@yahoo.com	2025-02-22 11:44:45	$2y$12$G6fzyVibFms5/SXlqGUC0.hi77Laylmy3KYsG.0M2gD4jTiMPnhAK	\N	2025-02-22 11:44:46	2025-02-22 11:44:46	1-216-352-8267
+35	Mr. Collin Kuvalis DDS	kara40@mertz.com	2025-02-22 11:44:46	$2y$12$ZJN.kIO2le8JcRVJvk9M3e8wqSNWGPWNZlOizr2zv8NPVJBzzxUzO	\N	2025-02-22 11:44:46	2025-02-22 11:44:46	+1 (484) 398-1517
+36	Nestor Lueilwitz Sr.	gay.reichel@yahoo.com	2025-02-22 11:44:46	$2y$12$cDy7rsRpQQx5ooZLuhG4ou2dEOy.vjKmrgmLE.M6LYzqnYhZPIife	\N	2025-02-22 11:44:46	2025-02-22 11:44:46	(559) 472-9971
+37	Carlie Moore	rolfson.itzel@smitham.com	2025-02-22 11:44:46	$2y$12$JprAsYdmgdI/cMeEzD1lQuOkqPFv1xhTAB6rDEjl1Rfg3g7Dse00u	\N	2025-02-22 11:44:46	2025-02-22 11:44:46	870-854-2014
+38	Miss Lorena Nicolas I	windler.jermey@walsh.net	2025-02-22 11:44:46	$2y$12$cPHBFdO/8yVSeMJ62fpKuejxyziKNqlcqXpXl99WhigMARmAUyEq6	\N	2025-02-22 11:44:47	2025-02-22 11:44:47	+19412437714
+39	Prof. Wellington Dibbert	hattie03@yahoo.com	2025-02-22 11:44:47	$2y$12$Du.mFfUsQ4ljgP555uFuT.kZxloPKiiy4tEnUga.aKerr2kTI79f.	\N	2025-02-22 11:44:47	2025-02-22 11:44:47	+18477520762
+40	Layla Cremin	clarson@gmail.com	2025-02-22 11:44:47	$2y$12$g2v3crIaYj2oIpD7VdvLRuxV9SAIZ9bOwLfskqMJ/yfDOciAzDz8K	\N	2025-02-22 11:44:47	2025-02-22 11:44:47	(567) 426-3349
+41	Ms. Adele Effertz	trinity.rodriguez@gmail.com	2025-02-22 11:44:47	$2y$12$rKzLLfhEsp/3I8s5ry6r1u3XoRlNx56ImIW3ci7P8XbLc.X/M2eba	\N	2025-02-22 11:44:47	2025-02-22 11:44:47	+17574941417
+42	Lelia Kertzmann	labadie.emilie@johnston.com	2025-02-22 11:44:47	$2y$12$JbXsGvkr2V2Divxsu..DTu8ACm8RJ2..jugoiLNmqGHuzUuDkqGgS	\N	2025-02-22 11:44:47	2025-02-22 11:44:47	+1.915.346.1622
+43	Tod Brakus	wfeeney@robel.net	2025-02-22 11:44:47	$2y$12$FzRvIwBzI013X20mOLvT5.YIbV6tAAmLTZTiehlJIuH9nURZrJBO2	\N	2025-02-22 11:44:48	2025-02-22 11:44:48	586-539-5474
+44	Eddie Donnelly	terrance.fadel@pagac.com	2025-02-22 11:44:48	$2y$12$N0yDB9/YvGfdBvrD/hafSO1iBa5/ICx3XaeJIpN7Gm08MIfjXQAh2	\N	2025-02-22 11:44:48	2025-02-22 11:44:48	+1.479.569.7585
+45	Clarabelle Predovic	boyle.earlene@hotmail.com	2025-02-22 11:44:48	$2y$12$BLNFgwc9p3TYnTRMyltb9eATLY4M26Nvh6UyNewebLaQ2giSC94Lm	\N	2025-02-22 11:44:48	2025-02-22 11:44:48	(330) 723-8552
+46	Lexie Larkin	hickle.angelita@hotmail.com	2025-02-22 11:44:48	$2y$12$eo39NUZw94XiRBVmuXIzVOXWRUcvYxe21nrlI5xNoJrZhrATPoFvm	\N	2025-02-22 11:44:48	2025-02-22 11:44:48	(925) 501-1836
+47	Verna Medhurst	emard.jerome@gmail.com	2025-02-22 11:44:48	$2y$12$OsMg/kTqgrFGSCwE/e452e30VbLO3lPnpnq5PAyA.HLTGfR1xDJvq	\N	2025-02-22 11:44:49	2025-02-22 11:44:49	(847) 360-2199
+48	Petra Ullrich DDS	nikita.kulas@russel.net	2025-02-22 11:44:49	$2y$12$d/ZkETz.8JKWuclRxgSTduyBkLdwIEg3xOSbfYoDLdJpUIi23mbyS	\N	2025-02-22 11:44:49	2025-02-22 11:44:49	1-352-686-9618
+49	Bennie Hamill	collins.naomie@bahringer.com	2025-02-22 11:44:49	$2y$12$/VHIuknNenylr.45jXqWT.w7tSgn5jSvtTbvV1muvmkPsfoj6hAo6	\N	2025-02-22 11:44:49	2025-02-22 11:44:49	+1-432-773-4699
+50	Dr. Jaycee Wisozk DDS	jhackett@yahoo.com	2025-02-22 11:44:49	$2y$12$/13/hj5BALNHvqjYvvbhu.jFTSKV4F6Hjq74sBCivC3lYrq0/1zFe	\N	2025-02-22 11:44:49	2025-02-22 11:44:49	843-940-1796
+51	Dr. Xavier Schaefer	kzieme@kutch.org	2025-02-22 11:44:49	$2y$12$ModJL/pNKpv7NHH6c1.mNOMCMW8LUY.lfvnVS/vnxLM006AuPiSIO	\N	2025-02-22 11:44:49	2025-02-22 11:44:49	1-585-251-0960
+\.
+
+
+--
+-- TOC entry 5092 (class 0 OID 0)
+-- Dependencies: 245
+-- Name: brands_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.brands_id_seq', 30, true);
+
+
+--
+-- TOC entry 5093 (class 0 OID 0)
+-- Dependencies: 247
+-- Name: categories_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.categories_id_seq', 21, true);
+
+
+--
+-- TOC entry 5094 (class 0 OID 0)
+-- Dependencies: 243
+-- Name: customer_addresses_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.customer_addresses_id_seq', 50, true);
+
+
+--
+-- TOC entry 5095 (class 0 OID 0)
+-- Dependencies: 226
+-- Name: failed_jobs_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.failed_jobs_id_seq', 1, false);
+
+
+--
+-- TOC entry 5096 (class 0 OID 0)
+-- Dependencies: 223
+-- Name: jobs_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.jobs_id_seq', 1, false);
+
+
+--
+-- TOC entry 5097 (class 0 OID 0)
+-- Dependencies: 215
+-- Name: migrations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.migrations_id_seq', 16, true);
+
+
+--
+-- TOC entry 5098 (class 0 OID 0)
+-- Dependencies: 232
+-- Name: oauth_personal_access_clients_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.oauth_personal_access_clients_id_seq', 1, true);
+
+
+--
+-- TOC entry 5099 (class 0 OID 0)
+-- Dependencies: 234
+-- Name: permissions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.permissions_id_seq', 1, false);
+
+
+--
+-- TOC entry 5100 (class 0 OID 0)
+-- Dependencies: 249
+-- Name: products_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.products_id_seq', 1, false);
+
+
+--
+-- TOC entry 5101 (class 0 OID 0)
+-- Dependencies: 236
+-- Name: roles_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.roles_id_seq', 4, true);
+
+
+--
+-- TOC entry 5102 (class 0 OID 0)
+-- Dependencies: 241
+-- Name: user_details_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.user_details_id_seq', 51, true);
+
+
+--
+-- TOC entry 5103 (class 0 OID 0)
+-- Dependencies: 217
+-- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.users_id_seq', 51, true);
+
+
+--
+-- TOC entry 4875 (class 2606 OID 113829)
+-- Name: brands brands_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.brands
+    ADD CONSTRAINT brands_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4877 (class 2606 OID 113831)
+-- Name: brands brands_slug_unique; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.brands
+    ADD CONSTRAINT brands_slug_unique UNIQUE (slug);
+
+
+--
+-- TOC entry 4828 (class 2606 OID 113656)
+-- Name: cache_locks cache_locks_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.cache_locks
+    ADD CONSTRAINT cache_locks_pkey PRIMARY KEY (key);
+
+
+--
+-- TOC entry 4826 (class 2606 OID 113649)
+-- Name: cache cache_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.cache
+    ADD CONSTRAINT cache_pkey PRIMARY KEY (key);
+
+
+--
+-- TOC entry 4879 (class 2606 OID 113841)
+-- Name: categories categories_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.categories
+    ADD CONSTRAINT categories_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4881 (class 2606 OID 113848)
+-- Name: categories categories_slug_unique; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.categories
+    ADD CONSTRAINT categories_slug_unique UNIQUE (slug);
+
+
+--
+-- TOC entry 4873 (class 2606 OID 113813)
+-- Name: customer_addresses customer_addresses_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.customer_addresses
+    ADD CONSTRAINT customer_addresses_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4835 (class 2606 OID 113683)
+-- Name: failed_jobs failed_jobs_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.failed_jobs
+    ADD CONSTRAINT failed_jobs_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4837 (class 2606 OID 113685)
+-- Name: failed_jobs failed_jobs_uuid_unique; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.failed_jobs
+    ADD CONSTRAINT failed_jobs_uuid_unique UNIQUE (uuid);
+
+
+--
+-- TOC entry 4833 (class 2606 OID 113673)
+-- Name: job_batches job_batches_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.job_batches
+    ADD CONSTRAINT job_batches_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4830 (class 2606 OID 113665)
+-- Name: jobs jobs_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.jobs
+    ADD CONSTRAINT jobs_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4812 (class 2606 OID 113615)
+-- Name: migrations migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.migrations
+    ADD CONSTRAINT migrations_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4862 (class 2606 OID 113756)
+-- Name: model_has_permissions model_has_permissions_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.model_has_permissions
+    ADD CONSTRAINT model_has_permissions_pkey PRIMARY KEY (permission_id, model_id, model_type);
+
+
+--
+-- TOC entry 4865 (class 2606 OID 113767)
+-- Name: model_has_roles model_has_roles_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.model_has_roles
+    ADD CONSTRAINT model_has_roles_pkey PRIMARY KEY (role_id, model_id, model_type);
+
+
+--
+-- TOC entry 4842 (class 2606 OID 113700)
+-- Name: oauth_access_tokens oauth_access_tokens_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.oauth_access_tokens
+    ADD CONSTRAINT oauth_access_tokens_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4839 (class 2606 OID 113692)
+-- Name: oauth_auth_codes oauth_auth_codes_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.oauth_auth_codes
+    ADD CONSTRAINT oauth_auth_codes_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4848 (class 2606 OID 113714)
+-- Name: oauth_clients oauth_clients_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.oauth_clients
+    ADD CONSTRAINT oauth_clients_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4851 (class 2606 OID 113722)
+-- Name: oauth_personal_access_clients oauth_personal_access_clients_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.oauth_personal_access_clients
+    ADD CONSTRAINT oauth_personal_access_clients_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4846 (class 2606 OID 113706)
+-- Name: oauth_refresh_tokens oauth_refresh_tokens_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.oauth_refresh_tokens
+    ADD CONSTRAINT oauth_refresh_tokens_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4820 (class 2606 OID 113633)
+-- Name: password_reset_tokens password_reset_tokens_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.password_reset_tokens
+    ADD CONSTRAINT password_reset_tokens_pkey PRIMARY KEY (email);
+
+
+--
+-- TOC entry 4853 (class 2606 OID 113734)
+-- Name: permissions permissions_name_guard_name_unique; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.permissions
+    ADD CONSTRAINT permissions_name_guard_name_unique UNIQUE (name, guard_name);
+
+
+--
+-- TOC entry 4855 (class 2606 OID 113732)
+-- Name: permissions permissions_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.permissions
+    ADD CONSTRAINT permissions_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4883 (class 2606 OID 113860)
+-- Name: products products_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.products
+    ADD CONSTRAINT products_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4885 (class 2606 OID 113872)
+-- Name: products products_slug_unique; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.products
+    ADD CONSTRAINT products_slug_unique UNIQUE (slug);
+
+
+--
+-- TOC entry 4867 (class 2606 OID 113782)
+-- Name: role_has_permissions role_has_permissions_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.role_has_permissions
+    ADD CONSTRAINT role_has_permissions_pkey PRIMARY KEY (permission_id, role_id);
+
+
+--
+-- TOC entry 4857 (class 2606 OID 113745)
+-- Name: roles roles_name_guard_name_unique; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.roles
+    ADD CONSTRAINT roles_name_guard_name_unique UNIQUE (name, guard_name);
+
+
+--
+-- TOC entry 4859 (class 2606 OID 113743)
+-- Name: roles roles_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.roles
+    ADD CONSTRAINT roles_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4823 (class 2606 OID 113640)
+-- Name: sessions sessions_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.sessions
+    ADD CONSTRAINT sessions_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4869 (class 2606 OID 113793)
+-- Name: user_details user_details_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.user_details
+    ADD CONSTRAINT user_details_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4871 (class 2606 OID 113800)
+-- Name: user_details user_details_slug_unique; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.user_details
+    ADD CONSTRAINT user_details_slug_unique UNIQUE (slug);
+
+
+--
+-- TOC entry 4814 (class 2606 OID 113626)
+-- Name: users users_email_unique; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_email_unique UNIQUE (email);
+
+
+--
+-- TOC entry 4816 (class 2606 OID 113784)
+-- Name: users users_mobile_unique; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_mobile_unique UNIQUE (mobile);
+
+
+--
+-- TOC entry 4818 (class 2606 OID 113624)
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4831 (class 1259 OID 113666)
+-- Name: jobs_queue_index; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX jobs_queue_index ON public.jobs USING btree (queue);
+
+
+--
+-- TOC entry 4860 (class 1259 OID 113749)
+-- Name: model_has_permissions_model_id_model_type_index; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX model_has_permissions_model_id_model_type_index ON public.model_has_permissions USING btree (model_id, model_type);
+
+
+--
+-- TOC entry 4863 (class 1259 OID 113760)
+-- Name: model_has_roles_model_id_model_type_index; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX model_has_roles_model_id_model_type_index ON public.model_has_roles USING btree (model_id, model_type);
+
+
+--
+-- TOC entry 4843 (class 1259 OID 113701)
+-- Name: oauth_access_tokens_user_id_index; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX oauth_access_tokens_user_id_index ON public.oauth_access_tokens USING btree (user_id);
+
+
+--
+-- TOC entry 4840 (class 1259 OID 113693)
+-- Name: oauth_auth_codes_user_id_index; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX oauth_auth_codes_user_id_index ON public.oauth_auth_codes USING btree (user_id);
+
+
+--
+-- TOC entry 4849 (class 1259 OID 113715)
+-- Name: oauth_clients_user_id_index; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX oauth_clients_user_id_index ON public.oauth_clients USING btree (user_id);
+
+
+--
+-- TOC entry 4844 (class 1259 OID 113707)
+-- Name: oauth_refresh_tokens_access_token_id_index; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX oauth_refresh_tokens_access_token_id_index ON public.oauth_refresh_tokens USING btree (access_token_id);
+
+
+--
+-- TOC entry 4821 (class 1259 OID 113642)
+-- Name: sessions_last_activity_index; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX sessions_last_activity_index ON public.sessions USING btree (last_activity);
+
+
+--
+-- TOC entry 4824 (class 1259 OID 113641)
+-- Name: sessions_user_id_index; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX sessions_user_id_index ON public.sessions USING btree (user_id);
+
+
+--
+-- TOC entry 4892 (class 2606 OID 113842)
+-- Name: categories categories_parent_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.categories
+    ADD CONSTRAINT categories_parent_id_foreign FOREIGN KEY (parent_id) REFERENCES public.categories(id) ON DELETE SET NULL;
+
+
+--
+-- TOC entry 4891 (class 2606 OID 113814)
+-- Name: customer_addresses customer_addresses_user_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.customer_addresses
+    ADD CONSTRAINT customer_addresses_user_id_foreign FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+--
+-- TOC entry 4886 (class 2606 OID 113750)
+-- Name: model_has_permissions model_has_permissions_permission_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.model_has_permissions
+    ADD CONSTRAINT model_has_permissions_permission_id_foreign FOREIGN KEY (permission_id) REFERENCES public.permissions(id) ON DELETE CASCADE;
+
+
+--
+-- TOC entry 4887 (class 2606 OID 113761)
+-- Name: model_has_roles model_has_roles_role_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.model_has_roles
+    ADD CONSTRAINT model_has_roles_role_id_foreign FOREIGN KEY (role_id) REFERENCES public.roles(id) ON DELETE CASCADE;
+
+
+--
+-- TOC entry 4893 (class 2606 OID 113866)
+-- Name: products products_brand_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.products
+    ADD CONSTRAINT products_brand_id_foreign FOREIGN KEY (brand_id) REFERENCES public.brands(id) ON DELETE CASCADE;
+
+
+--
+-- TOC entry 4894 (class 2606 OID 113861)
+-- Name: products products_category_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.products
+    ADD CONSTRAINT products_category_id_foreign FOREIGN KEY (category_id) REFERENCES public.categories(id) ON DELETE CASCADE;
+
+
+--
+-- TOC entry 4888 (class 2606 OID 113771)
+-- Name: role_has_permissions role_has_permissions_permission_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.role_has_permissions
+    ADD CONSTRAINT role_has_permissions_permission_id_foreign FOREIGN KEY (permission_id) REFERENCES public.permissions(id) ON DELETE CASCADE;
+
+
+--
+-- TOC entry 4889 (class 2606 OID 113776)
+-- Name: role_has_permissions role_has_permissions_role_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.role_has_permissions
+    ADD CONSTRAINT role_has_permissions_role_id_foreign FOREIGN KEY (role_id) REFERENCES public.roles(id) ON DELETE CASCADE;
+
+
+--
+-- TOC entry 4890 (class 2606 OID 113794)
+-- Name: user_details user_details_user_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.user_details
+    ADD CONSTRAINT user_details_user_id_foreign FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+-- Completed on 2025-02-25 07:41:53
+
+--
+-- PostgreSQL database dump complete
+--
+
