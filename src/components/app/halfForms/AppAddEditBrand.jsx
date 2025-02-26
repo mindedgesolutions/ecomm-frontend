@@ -171,7 +171,7 @@ const AppAddEditBrand = ({ editId, brands, setEditId }) => {
             type="file"
             id="logo"
             name="logo"
-            className="flex h-10 w-full rounded-sm border border-input bg-background px-3 py-2 text-base file:border-1 file:bg-transparent file:text-xs file:font-light file:text-foreground md:text-xs"
+            className="flex h-10 w-full rounded-sm border border-input bg-background p-2 text-base file:border-1 file:text-sm file:border-0 file:bg-warning-foreground/10 file:py-0.5 file:text-warning-foreground file:font-normal md:text-xs"
             onChange={handleImgChange}
             onKeyUp={resetErrors}
           />

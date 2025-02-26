@@ -37,7 +37,7 @@ const router = createBrowserRouter([
           {
             path: "new",
             element: <wb.AdAddEditProduct />,
-            loader: adAddEditProductLoader(store),
+            loader: adAddEditProductLoader,
           },
           { path: "discounts", element: <wb.AdDiscountList /> },
           { path: "bought-together", element: <wb.AdBoughtTogetherList /> },

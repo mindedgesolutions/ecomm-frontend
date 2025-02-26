@@ -13,3 +13,4 @@ export { default as AppDeleteCategory } from "@/components/app/deleteComponents/
 export { default as AppCategoryFilter } from "@/components/app/filters/AppCategoryFilter";
 export { default as AppTextEditor } from "@/components/app/common/AppTextEditor";
 export { default as AppToolBar } from "@/components/app/common/AppToolBar";
+export { default as AppBrandDropdown } from "@/components/app/common/AppBrandDropdown";
