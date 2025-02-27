@@ -2,6 +2,7 @@ import {
   AppBrandDropdown,
   AppContentWrapper,
   AppPageLoader,
+  AppSubmitBtn,
   AppTextEditor,
 } from "@/components";
 import { Button } from "@/components/ui/button";
@@ -10,44 +11,46 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import customFetch from "@/utils/customFetch";
 import showError from "@/utils/showError";
+import showSuccess from "@/utils/showSuccess";
 import { X } from "lucide-react";
 import { nanoid } from "nanoid";
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import { useLoaderData } from "react-router-dom";
+import { Link, useLoaderData } from "react-router-dom";
 
 const AdAddEditProduct = () => {
   document.title = `Add new product | ${import.meta.env.VITE_APP_NAME}`;
 
   const { currentUser } = useSelector((store) => store.currentUser);
+  const slug = currentUser?.user_details?.slug;
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const { parentCategories } = useLoaderData();
-  const [brandOptions, setBrandsOptions] = useState("");
+  const [brandOption, setBrandsOption] = useState("");
   const [form, setForm] = useState({
     category: "",
     name: "",
     code: "",
     description: "",
     price: "",
-    discountType: "inr",
+    discountType: "",
     discountAmt: "",
     discountedPrice: "",
-    stock: "",
+    stock: 0,
   });
-  const [images, setImages] = useState([]);
   const [coverImage, setCoverImage] = useState(null);
+  const [validImages, setValidImages] = useState([]);
+  const [images, setImages] = useState([]);
 
   // ---------------------------------------------
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const updatedForm = { ...form, [e.target.name]: e.target.value };
+    setForm(updatedForm);
 
-    const price = e.target.name === "price" ? e.target.value : form.price;
-    const discountType =
-      e.target.name === "discountType" ? e.target.value : form.discountType;
-    const discountAmt =
-      e.target.name === "discountAmt" ? e.target.value : form.discountAmt;
+    const price = updatedForm.price;
+    const discountType = updatedForm.discountType;
+    const discountAmt = updatedForm.discountAmt;
 
     if (price && discountType && discountAmt) {
       validateDiscount(price, discountType, discountAmt);
@@ -125,7 +128,8 @@ const AdAddEditProduct = () => {
       preview: URL.createObjectURL(file),
     }));
 
-    setImages((prevImages) => [...prevImages, ...newImages]);
+    setValidImages((prevImages) => [...prevImages, ...newImages]);
+    setImages((prevImages) => [...prevImages, ...filteredFiles]);
   };
 
   const setAsCover = (index) => {
@@ -133,6 +137,7 @@ const AdAddEditProduct = () => {
   };
 
   const removeImage = (index) => {
+    setValidImages((prevImages) => prevImages.filter((_, i) => i !== index));
     setImages((prevImages) => prevImages.filter((_, i) => i !== index));
     if (coverImage && images[index] === coverImage) {
       setCoverImage(null);
@@ -153,17 +158,101 @@ const AdAddEditProduct = () => {
       price: "",
       discountType: "",
       discountAmt: "",
-      stock: "",
+      discountedPrice: "",
+      stock: 0,
     });
-    setBrandsOptions("");
+    setBrandsOption("");
     setErrors([]);
-    setEditId(null);
+    setCoverImage(null);
+    setValidImages([]);
+    setImages([]);
   };
 
   // ---------------------------------------------
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    let errorBag = {};
+    let errorCount = 0;
+
+    if (!form.category) {
+      errorBag = { ...errorBag, category: "Category is required" };
+      errorCount++;
+    }
+    if (!brandOption) {
+      errorBag = { ...errorBag, brand: "Brand is required" };
+      errorCount++;
+    }
+    if (!form.name) {
+      errorBag = { ...errorBag, name: "Name is required" };
+      errorCount++;
+    }
+    if (!form.description) {
+      errorBag = { ...errorBag, description: "Description is required" };
+      errorCount++;
+    }
+    if (!form.price) {
+      errorBag = { ...errorBag, price: "Price is required" };
+      errorCount++;
+    }
+    if (!form.stock) {
+      errorBag = { ...errorBag, stock: "Stock is required" };
+      errorCount++;
+    }
+    if (images.length === 0) {
+      errorBag = { ...errorBag, images: "At least one image is required" };
+      errorCount++;
+    }
+
+    if (errorCount > 0) {
+      setErrors(errorBag);
+      return;
+    }
+
+    setIsLoading(true);
+    const { value: brand } = brandOption;
+    let data = new FormData();
+    data.append("category", form.category);
+    data.append("brand", brand);
+    data.append("name", form.name);
+    data.append("code", form.code);
+    data.append("description", form.description);
+    data.append("price", form.price);
+    data.append("discountType", form.discountType);
+    data.append("discountAmt", form.discountAmt);
+    data.append("discountedPrice", form.discountedPrice);
+    data.append("stock", form.stock);
+
+    for (let i = 0; i < images.length; i++) {
+      if (images[i] instanceof File) {
+        data.append("images[]", images[i]);
+      } else {
+        console.error("Not a valid file:", images[i]);
+      }
+    }
+
+    if (coverImage instanceof File) {
+      data.append("cover", coverImage);
+    } else {
+      console.error("Not a valid file:", coverImage);
+    }
+
+    try {
+      const response = await customFetch.post(`/admin/products`, data, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      if (response?.status === 201 || response?.status === 200) {
+        resetForm();
+        showSuccess("Product added successfully");
+      }
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+      setErrors(error?.response?.data?.errors);
+      return;
+    }
   };
 
   return (
@@ -229,8 +318,8 @@ const AdAddEditProduct = () => {
                 product brand <span className="text-red-500">*</span>
               </Label>
               <AppBrandDropdown
-                brandOptions={brandOptions}
-                setBrandsOptions={setBrandsOptions}
+                brandOption={brandOption}
+                setBrandsOption={setBrandsOption}
               />
               <span className="text-red-500 text-xs tracking-wider">
                 {errors?.brand}
@@ -253,7 +342,6 @@ const AdAddEditProduct = () => {
                 placeholder="Product name here"
                 value={form.name}
                 onChange={handleChange}
-                onKeyUp={resetErrors}
               />
               <span className="text-red-500 text-xs tracking-wider">
                 {errors?.name}
@@ -273,7 +361,6 @@ const AdAddEditProduct = () => {
                 placeholder="Product code here (if any)"
                 value={form.code}
                 onChange={handleChange}
-                onKeyUp={resetErrors}
               />
               <span className="text-red-500 text-xs tracking-wider">
                 {errors?.code}
@@ -296,7 +383,6 @@ const AdAddEditProduct = () => {
                 placeholder="Product description here"
                 value={form.description}
                 onChange={handleChange}
-                onKeyUp={resetErrors}
               ></Textarea>
               <span className="text-red-500 text-xs tracking-wider">
                 {errors?.description}
@@ -338,6 +424,7 @@ const AdAddEditProduct = () => {
                   value={form.discountType}
                   onChange={handleChange}
                 >
+                  <option value="">- Select -</option>
                   <option value={`inr`}>INR</option>
                   <option value={`%`}>%</option>
                 </select>
@@ -356,15 +443,15 @@ const AdAddEditProduct = () => {
             </div>
             <div className="basis-1/3 flex flex-col justify-start items-start">
               <Label
-                htmlFor="name"
+                htmlFor="discountedPrice"
                 className="capitalize text-muted-foreground tracking-wider mb-2"
               >
                 discounted price (non-editable)
               </Label>
               <Input
                 type="text"
-                id="name"
-                name="name"
+                id="discountedPrice"
+                name="discountedPrice"
                 placeholder="Auto-calculated discounted price"
                 readOnly={true}
                 value={form.discountedPrice}
@@ -386,8 +473,7 @@ const AdAddEditProduct = () => {
                 name="stock"
                 placeholder="Product starting stock here"
                 value={form.stock}
-                onChange={handleChange}
-                onKeyUp={resetErrors}
+                onChange={(e) => setForm({ ...form, stock: e.target.value })}
               />
               <span className="text-red-500 text-xs tracking-wider">
                 {errors?.stock}
@@ -429,15 +515,15 @@ const AdAddEditProduct = () => {
               <div className="mb-4 p-0.5 w-32 rounded-sm">
                 <p className="text-center text-primary text-sm">Cover Image</p>
                 <img
-                  src={coverImage.preview}
+                  src={URL.createObjectURL(coverImage)}
                   alt="Cover"
                   className="w-full h-24 object-cover rounded"
                 />
               </div>
             )}
 
-            <div className="grid grid-cols-3 gap-2">
-              {images.map((img, index) => {
+            <div className="w-full flex gap-4">
+              {validImages.map((img, index) => {
                 return (
                   <div key={index} className="relative w-32">
                     <img
@@ -446,12 +532,14 @@ const AdAddEditProduct = () => {
                       className="w-full h-24 object-cover rounded"
                     />
                     <button
+                      type="button"
                       className="absolute top-1 right-1 bg-red-500 text-white text-xs p-0.5 rounded"
                       onClick={() => removeImage(index)}
                     >
                       <X size={14} />
                     </button>
                     <button
+                      type="button"
                       className="absolute bottom-1 left-1 bg-primary text-white text-xs p-1 rounded"
                       onClick={() => setAsCover(index)}
                     >
@@ -462,6 +550,22 @@ const AdAddEditProduct = () => {
               })}
             </div>
           </div>
+        </div>
+        <div className="border border-muted rounded-sm p-4 mt-3 flex flex-row justify-center items-center gap-4">
+          <AppSubmitBtn
+            text={`Add Product`}
+            isLoading={isLoading}
+            customClass={`min-w-32 tracking-widest uppercase`}
+          />
+          <Link to={`/admin/${slug}/products`}>
+            <Button
+              type="button"
+              variant="outline"
+              className="tracking-widest uppercase"
+            >
+              Back to List
+            </Button>
+          </Link>
         </div>
       </form>
     </AppContentWrapper>

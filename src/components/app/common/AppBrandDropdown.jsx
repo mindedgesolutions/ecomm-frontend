@@ -3,7 +3,7 @@ import Select from "react-select";
 import noImage from "@/assets/images/no-image.jpg";
 import { useLoaderData } from "react-router-dom";
 
-const AppBrandDropdown = ({ brandOptions, setBrandsOptions }) => {
+const AppBrandDropdown = ({ brandOption, setBrandsOption }) => {
   const { brands } = useLoaderData();
   const [localState, setLocalState] = useState("");
 
@@ -27,13 +27,13 @@ const AppBrandDropdown = ({ brandOptions, setBrandsOptions }) => {
         <img
           src={data.imageUrl}
           alt={import.meta.env.VITE_APP_NAME}
-          className="h-4 w-auto mr-3"
+          className="h-5 w-auto max-w-6 mr-3"
         />
       ) : (
         <img
           src={noImage}
           alt={import.meta.env.VITE_APP_NAME}
-          className="h-4 w-auto mr-3"
+          className="h-5 w-auto max-w-6 mr-3"
         />
       )}
       <span className="text-black">{data.label}</span>
@@ -43,12 +43,16 @@ const AppBrandDropdown = ({ brandOptions, setBrandsOptions }) => {
   const customOption = (props) => (
     <span {...props.innerProps} className="flex items-center p-2 text-black">
       {props.data.imageUrl ? (
-        <img src={props.data.imageUrl} alt="" className="h-4 w-auto mr-3" />
+        <img
+          src={props.data.imageUrl}
+          alt=""
+          className="h-5 w-auto max-w-6 mr-3"
+        />
       ) : (
         <img
           src={noImage}
           alt={import.meta.env.VITE_APP_NAME}
-          className="h-4 w-auto mr-3"
+          className="h-5 w-auto max-w-6 mr-3"
         />
       )}
       {props.data.label}
@@ -57,7 +61,7 @@ const AppBrandDropdown = ({ brandOptions, setBrandsOptions }) => {
 
   const handleChange = async (selected) => {
     setLocalState(selected);
-    setBrandsOptions(selected);
+    setBrandsOption(selected);
   };
 
   return (
@@ -68,7 +72,7 @@ const AppBrandDropdown = ({ brandOptions, setBrandsOptions }) => {
       options={options}
       components={{ SingleValue: customSingleValue, Option: customOption }}
       onChange={handleChange}
-      value={brandOptions}
+      value={brandOption}
       className="flex h-auto w-full items-center justify-between rounded-md border border-input bg-background px-0 py-0 text-sm focus:outline-none"
     />
   );

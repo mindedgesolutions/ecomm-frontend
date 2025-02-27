@@ -3,9 +3,11 @@ import {
   AppCategoryFilter,
   AppContentWrapper,
   AppDeleteCategory,
+  AppDiscountPopup,
   AppPageLoader,
   AppPaginationContainer,
   AppSkeletonTableRow,
+  AppTooltip,
 } from "@/components";
 import { serialNo } from "@/utils/functions";
 import dayjs from "dayjs";
@@ -43,11 +45,36 @@ const AdProductList = () => {
 
   // ---------------------------------------------
 
-  const fetchData = async () => {};
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      const response = await customFetch.get(`/admin/products`, {
+        params: { page: queryString.get("page") || "" },
+      });
+
+      console.log(response?.data?.data);
+
+      if (response?.status === 200) {
+        setData(response?.data?.data);
+        setMeta({
+          currentPage: response?.data?.meta?.current_page,
+          lastPage: response?.data?.meta?.last_page,
+          total: response?.data?.meta?.total,
+        });
+      }
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+      showError(error?.response?.data?.errors);
+      return;
+    }
+  };
 
   // ---------------------------------------------
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    fetchData();
+  }, [counter, queryString.get("page")]);
 
   // ---------------------------------------------
 
@@ -57,7 +84,7 @@ const AdProductList = () => {
     <AppContentWrapper>
       {isLoading && <AppPageLoader />}
 
-      <div className="flex flex-row justify-between items-center bg-muted my-1 p-2">
+      <div className="flex flex-row justify-between items-center bg-muted my-1 p-2 py-1">
         <h3 className="font-semibold text-xl tracking-widest text-muted-foreground">
           Products
         </h3>
@@ -78,12 +105,12 @@ const AdProductList = () => {
           <TableHeader>
             <TableRow>
               <TableHead className="w-[50px]">#</TableHead>
-              <TableHead>Category</TableHead>
               <TableHead>Name</TableHead>
-              <TableHead>Code</TableHead>
               <TableHead>Brand</TableHead>
+              <TableHead>Category</TableHead>
               <TableHead>Price</TableHead>
               <TableHead>Stock</TableHead>
+              <TableHead>Offer/s</TableHead>
               <TableHead>Last Updated</TableHead>
               <TableHead></TableHead>
             </TableRow>
@@ -106,19 +133,56 @@ const AdProductList = () => {
               </TableRow>
             ) : (
               data?.map((product, index) => {
+                const img =
+                  import.meta.env.VITE_BASE_URL +
+                  (product?.images?.is_cover?.path ||
+                    product?.images?.[0]?.path);
+
+                const category = product?.parent_category_id ? (
+                  <>
+                    <div className="text-[11px] mb-1 text-muted-foreground tracking-wide">
+                      {`${product?.parent_category_name} >`}
+                    </div>
+                    <span>{product?.category_name}</span>
+                  </>
+                ) : (
+                  product?.category_name
+                );
+
                 return (
                   <TableRow
                     key={product.id}
                     className="text-xs uppercase group"
                   >
-                    <TableCell></TableCell>
-                    <TableCell></TableCell>
-                    <TableCell></TableCell>
-                    <TableCell></TableCell>
-                    <TableCell></TableCell>
-                    <TableCell></TableCell>
-                    <TableCell></TableCell>
-                    <TableCell></TableCell>
+                    <TableCell>{serialNo(meta.currentPage) + index}.</TableCell>
+                    <TableCell>
+                      <div className="flex flex-row justify-start items-center space-x-2">
+                        <img
+                          src={img}
+                          alt={product.name}
+                          className="h-8 w-8 object-cover rounded-lg"
+                        />
+                        <span>
+                          <AppTooltip content={product.name} />
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <AppTooltip content={product.brand_name} />
+                    </TableCell>
+                    <TableCell>{category}</TableCell>
+                    <TableCell>{product.price}</TableCell>
+                    <TableCell>{product.stock}</TableCell>
+                    <TableCell>
+                      {product?.discount?.length > 0 && (
+                        <AppDiscountPopup offers={product?.discount} />
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {dayjs(new Date(product.updated_at)).format(
+                        "DD/MM/YYYY h:mm A"
+                      )}
+                    </TableCell>
                     <TableCell>
                       <div className="flex flex-col md:flex-row justify-end items-center space-y-4 md:space-y-0 md:gap-4">
                         {product.is_active ? (
