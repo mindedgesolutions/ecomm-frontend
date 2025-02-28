@@ -3,29 +3,31 @@ import {
   AppContentWrapper,
   AppPageLoader,
   AppSubmitBtn,
-  AppTextEditor,
 } from "@/components";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import customFetch from "@/utils/customFetch";
+import { discountedPrice } from "@/utils/functions";
 import showError from "@/utils/showError";
 import showSuccess from "@/utils/showSuccess";
 import { X } from "lucide-react";
 import { nanoid } from "nanoid";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Link, useLoaderData } from "react-router-dom";
+import { Link, useLoaderData, useParams } from "react-router-dom";
 
 const AdAddEditProduct = () => {
-  document.title = `Add new product | ${import.meta.env.VITE_APP_NAME}`;
-
   const { currentUser } = useSelector((store) => store.currentUser);
   const slug = currentUser?.user_details?.slug;
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
-  const { parentCategories } = useLoaderData();
+  const { id: editId } = useParams();
+  const { parentCategories, editUser } = useLoaderData();
+  document.title = editId
+    ? `${editUser?.name} | ${import.meta.env.VITE_APP_NAME}`
+    : `Add New Product | ${import.meta.env.VITE_APP_NAME}`;
   const [brandOption, setBrandsOption] = useState("");
   const [form, setForm] = useState({
     category: "",
@@ -39,6 +41,7 @@ const AdAddEditProduct = () => {
     stock: 0,
   });
   const [coverImage, setCoverImage] = useState(null);
+  const [dbCover, setDbCover] = useState(null);
   const [validImages, setValidImages] = useState([]);
   const [images, setImages] = useState([]);
 
@@ -200,7 +203,7 @@ const AdAddEditProduct = () => {
       errorBag = { ...errorBag, stock: "Stock is required" };
       errorCount++;
     }
-    if (images.length === 0) {
+    if (!images || images.length === 0) {
       errorBag = { ...errorBag, images: "At least one image is required" };
       errorCount++;
     }
@@ -223,37 +226,94 @@ const AdAddEditProduct = () => {
     data.append("discountAmt", form.discountAmt);
     data.append("discountedPrice", form.discountedPrice);
     data.append("stock", form.stock);
+    data.append("id", editId);
 
-    for (let i = 0; i < images.length; i++) {
-      if (images[i] instanceof File) {
-        data.append("images[]", images[i]);
+    let remaining = [];
+
+    if (images && images.length > 0) {
+      for (let i = 0; i < images.length; i++) {
+        if (images[i] instanceof File) {
+          data.append("images[]", images[i]);
+        } else {
+          // console.error("Not a valid file:", images[i]);
+          if (editId) {
+            remaining = [...remaining, images[i]?.path];
+            data.append("remaining", JSON.stringify(remaining));
+          }
+        }
+      }
+
+      if (coverImage instanceof File) {
+        data.append("cover", coverImage);
       } else {
-        console.error("Not a valid file:", images[i]);
+        // console.error("Not a valid file:", coverImage);
       }
     }
 
-    if (coverImage instanceof File) {
-      data.append("cover", coverImage);
-    } else {
-      console.error("Not a valid file:", coverImage);
-    }
+    const apiUrl = editId
+      ? `/admin/products/update/${editId}`
+      : `/admin/products`;
+    const msg = editId ? "updated" : "added";
 
     try {
-      const response = await customFetch.post(`/admin/products`, data, {
+      const response = await customFetch.post(apiUrl, data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
       if (response?.status === 201 || response?.status === 200) {
-        resetForm();
-        showSuccess("Product added successfully");
+        !editId && resetForm();
+        showSuccess(`Product ${msg} successfully`);
       }
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
+      console.log(error);
       setErrors(error?.response?.data?.errors);
       return;
     }
   };
+
+  // ---------------------------------------------
+
+  useEffect(() => {
+    if (editUser) {
+      const dPrice = discountedPrice(
+        editUser?.price,
+        editUser?.discount?.[0]?.discount_type,
+        editUser?.discount?.[0]?.discount_amt
+      );
+
+      setForm({
+        ...form,
+        category: editUser?.category_id || "",
+        name: editUser?.name || "",
+        code: editUser?.code || "",
+        description: editUser?.description || "",
+        price: editUser?.price || "",
+        discountType: editUser?.discount?.[0]?.discount_type || "",
+        discountAmt: editUser?.discount?.[0]?.discount_amt || "",
+        discountedPrice: dPrice,
+        stock: editUser?.stock || 0,
+      });
+      setBrandsOption({
+        value: editUser?.brand_id || "",
+        label: editUser?.brand_name,
+      });
+
+      const imgArr = [];
+      editUser?.images?.map((img) => {
+        imgArr.push({ preview: `${import.meta.env.VITE_BASE_URL}${img.path}` });
+      });
+
+      const cover =
+        editUser?.images?.is_cover &&
+        `${import.meta.env.VITE_BASE_URL}${editUser?.images?.path}`;
+
+      setValidImages(imgArr);
+      setDbCover(cover);
+      setImages(editUser?.images);
+    }
+  }, [editId]);
 
   return (
     <AppContentWrapper>
@@ -454,7 +514,7 @@ const AdAddEditProduct = () => {
                 name="discountedPrice"
                 placeholder="Auto-calculated discounted price"
                 readOnly={true}
-                value={form.discountedPrice}
+                value={form.discountedPrice || ""}
                 onChange={handleChange}
               />
             </div>
@@ -511,16 +571,16 @@ const AdAddEditProduct = () => {
             </span>
           </div>
           <div className="w-full flex gap-4 mb-4">
-            {coverImage && (
-              <div className="mb-4 p-0.5 w-32 rounded-sm">
-                <p className="text-center text-primary text-sm">Cover Image</p>
-                <img
-                  src={URL.createObjectURL(coverImage)}
-                  alt="Cover"
-                  className="w-full h-24 object-cover rounded"
-                />
-              </div>
-            )}
+            {/* {coverImage && ( */}
+            <div className="mb-4 p-0.5 w-32 rounded-sm">
+              <p className="text-center text-primary text-sm">Cover Image</p>
+              <img
+                src={coverImage ? URL.createObjectURL(coverImage) : dbCover}
+                alt="Cover"
+                className="w-full h-24 object-cover rounded"
+              />
+            </div>
+            {/* )} */}
 
             <div className="w-full flex gap-4">
               {validImages.map((img, index) => {
@@ -553,7 +613,7 @@ const AdAddEditProduct = () => {
         </div>
         <div className="border border-muted rounded-sm p-4 mt-3 flex flex-row justify-center items-center gap-4">
           <AppSubmitBtn
-            text={`Add Product`}
+            text={editId ? `Update Details` : `Add Product`}
             isLoading={isLoading}
             customClass={`min-w-32 tracking-widest uppercase`}
           />
@@ -575,7 +635,10 @@ export default AdAddEditProduct;
 
 // ----------------------------------------------
 
-export const loader = async () => {
+export const loader = async ({ params }) => {
+  const { id } = params;
+  let editUser = {};
+
   try {
     const dbParents = await customFetch.get(`/master/parent-categories`);
     const parentCategories = dbParents.data;
@@ -583,7 +646,15 @@ export const loader = async () => {
     const dbBrands = await customFetch.get(`/master/brands`);
     const brands = dbBrands.data;
 
-    return { parentCategories, brands };
+    if (id) {
+      const response = await customFetch.get(`/admin/products/${id}`);
+
+      if (response?.status === 200) {
+        editUser = response?.data?.data;
+      }
+    }
+
+    return { parentCategories, brands, editUser };
   } catch (error) {
     console.log(error);
     showError(error?.response?.data?.errors);

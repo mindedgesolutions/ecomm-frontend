@@ -1,8 +1,7 @@
 import {
-  AppAddEditCategory,
   AppCategoryFilter,
   AppContentWrapper,
-  AppDeleteCategory,
+  AppDeleteProduct,
   AppDiscountPopup,
   AppPageLoader,
   AppPaginationContainer,
@@ -26,9 +25,8 @@ import customFetch from "@/utils/customFetch";
 import showError from "@/utils/showError";
 import { Link, useLocation } from "react-router-dom";
 import showSuccess from "@/utils/showSuccess";
-import { setBrands } from "@/features/brandSlice";
-import { setParentCategories } from "@/features/categorySlice";
 import { Button } from "@/components/ui/button";
+import { updateCounter } from "@/features/commonSlice";
 
 const AdProductList = () => {
   document.title = `List of Products | ${import.meta.env.VITE_APP_NAME}`;
@@ -38,7 +36,7 @@ const AdProductList = () => {
   const [meta, setMeta] = useState({ currentPage: "", lastPage: "", total: 0 });
   const { counter } = useSelector((store) => store.common);
   const { currentUser } = useSelector((store) => store.currentUser);
-  const [editId, setEditId] = useState(null);
+  const slug = currentUser?.user_details?.slug;
   const { search } = useLocation();
   const queryString = new URLSearchParams(search);
   const dispatch = useDispatch();
@@ -51,8 +49,6 @@ const AdProductList = () => {
       const response = await customFetch.get(`/admin/products`, {
         params: { page: queryString.get("page") || "" },
       });
-
-      console.log(response?.data?.data);
 
       if (response?.status === 200) {
         setData(response?.data?.data);
@@ -78,7 +74,21 @@ const AdProductList = () => {
 
   // ---------------------------------------------
 
-  const activate = async (id) => {};
+  const activate = async (id) => {
+    setIsLoading(true);
+    try {
+      const response = await customFetch.put(`/admin/products/restore/${id}`);
+      if (response?.status === 200) {
+        setIsLoading(false);
+        dispatch(updateCounter());
+        showSuccess(`Product activated`);
+      }
+    } catch (error) {
+      setIsLoading(false);
+      showError(error?.response?.data?.errors);
+      return;
+    }
+  };
 
   return (
     <AppContentWrapper>
@@ -187,16 +197,17 @@ const AdProductList = () => {
                       <div className="flex flex-col md:flex-row justify-end items-center space-y-4 md:space-y-0 md:gap-4">
                         {product.is_active ? (
                           <>
-                            <button
-                              type="button"
-                              onClick={() => setEditId(product.id)}
+                            <Link
+                              to={`/admin/${slug}/products/${product.id}/edit`}
                             >
-                              <Pencil
-                                size={14}
-                                className="text-muted-foreground transition duration-200 group-hover:text-warning-foreground"
-                              />
-                            </button>
-                            <AppDeleteCategory
+                              <button type="button">
+                                <Pencil
+                                  size={14}
+                                  className="text-muted-foreground transition duration-200 group-hover:text-warning-foreground"
+                                />
+                              </button>
+                            </Link>
+                            <AppDeleteProduct
                               deleteFromTable={false}
                               deleteId={product.id}
                             />

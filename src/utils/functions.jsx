@@ -131,3 +131,13 @@ export const constructPrevOrNext = ({
   return { prevUrl, nextUrl };
 };
 // Pagination ends ------
+
+export const discountedPrice = (price, type, discount) => {
+  let discountedPrice = 0;
+  if (type === "%") {
+    discountedPrice = price - (price * discount) / 100;
+  } else {
+    discountedPrice = price - discount;
+  }
+  return discountedPrice;
+};

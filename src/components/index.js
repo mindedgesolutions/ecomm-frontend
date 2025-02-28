@@ -16,3 +16,4 @@ export { default as AppToolBar } from "@/components/app/common/AppToolBar";
 export { default as AppBrandDropdown } from "@/components/app/common/AppBrandDropdown";
 export { default as AppTooltip } from "@/components/app/common/AppTooltip";
 export { default as AppDiscountPopup } from "@/components/app/common/AppDiscountPopup";
+export { default as AppDeleteProduct } from "@/components/app/deleteComponents/AppDeleteProduct";
