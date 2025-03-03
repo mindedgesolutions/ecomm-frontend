@@ -12,7 +12,7 @@ const AppDiscountPopup = ({ offers }) => {
       <PopoverTrigger asChild>
         <CircleHelp size={16} className="text-red-500 cursor-pointer" />
       </PopoverTrigger>
-      <PopoverContent className="w-80 p-2" align="end">
+      <PopoverContent className="w-80 p-4" align="end">
         {offers?.map((offer, index) => {
           const sentence =
             offer?.discount_type === "inr"

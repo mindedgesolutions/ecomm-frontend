@@ -9,12 +9,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import customFetch from "@/utils/customFetch";
-import { discountedPrice } from "@/utils/functions";
 import showError from "@/utils/showError";
 import showSuccess from "@/utils/showSuccess";
 import { X } from "lucide-react";
 import { nanoid } from "nanoid";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, useLoaderData, useParams } from "react-router-dom";
 
@@ -168,6 +167,7 @@ const AdAddProduct = () => {
     setCoverImage(null);
     setValidImages([]);
     setImages([]);
+    document.getElementById("images").value = "";
   };
 
   // ---------------------------------------------
@@ -225,7 +225,6 @@ const AdAddProduct = () => {
     data.append("discountAmt", form.discountAmt);
     data.append("discountedPrice", form.discountedPrice);
     data.append("stock", form.stock);
-    data.append("id", editId || "");
 
     let remaining = [];
 
@@ -252,18 +251,16 @@ const AdAddProduct = () => {
     // }
     // return;
 
-    const apiUrl = editId
-      ? `/admin/products/update/${editId}`
-      : `/admin/products`;
-    const msg = editId ? "updated" : "added";
+    const apiUrl = `/admin/products`;
+    const msg = "added";
 
     try {
       const response = await customFetch.post(apiUrl, data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      if (response?.status === 201 || response?.status === 200) {
-        !editId && resetForm();
+      if (response?.status === 201) {
+        resetForm();
         showSuccess(`Product ${msg} successfully`);
       }
       setIsLoading(false);
@@ -276,46 +273,6 @@ const AdAddProduct = () => {
   };
 
   // ---------------------------------------------
-
-  useEffect(() => {
-    if (editUser) {
-      const dPrice = discountedPrice(
-        editUser?.price,
-        editUser?.discount?.[0]?.discount_type,
-        editUser?.discount?.[0]?.discount_amt
-      );
-
-      setForm({
-        ...form,
-        category: editUser?.category_id || "",
-        name: editUser?.name || "",
-        code: editUser?.code || "",
-        description: editUser?.description || "",
-        price: editUser?.price || "",
-        discountType: editUser?.discount?.[0]?.discount_type || "",
-        discountAmt: editUser?.discount?.[0]?.discount_amt || "",
-        discountedPrice: dPrice,
-        stock: editUser?.stock || 0,
-      });
-      setBrandsOption({
-        value: editUser?.brand_id || "",
-        label: editUser?.brand_name,
-      });
-
-      const imgArr = [];
-      editUser?.images?.map((img) => {
-        imgArr.push({ preview: `${import.meta.env.VITE_BASE_URL}${img.path}` });
-      });
-
-      const cover =
-        editUser?.images?.is_cover &&
-        `${import.meta.env.VITE_BASE_URL}${editUser?.images?.path}`;
-
-      setValidImages(imgArr);
-      // setDbCover(cover);
-      // setImages(editUser?.images);
-    }
-  }, [editId]);
 
   return (
     <AppContentWrapper>

@@ -14,7 +14,7 @@ import showError from "@/utils/showError";
 import showSuccess from "@/utils/showSuccess";
 import { X } from "lucide-react";
 import { nanoid } from "nanoid";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, useLoaderData, useParams } from "react-router-dom";
 
@@ -28,57 +28,34 @@ const AdEditProduct = () => {
   const [errors, setErrors] = useState({});
   const { id: editId } = useParams();
 
+  const dPrice = discountedPrice(
+    editUser?.price,
+    editUser?.discount?.[0]?.discount_type,
+    editUser?.discount?.[0]?.discount_amt
+  );
+
+  const dbCover = editUser.images.find((img) => img.is_cover === true);
+
   const [form, setForm] = useState({
-    category: "",
-    name: "",
-    code: "",
-    description: "",
-    price: "",
-    discountType: "",
-    discountAmt: "",
-    discountedPrice: "",
-    stock: 0,
+    category: editUser?.category_id || "",
+    name: editUser?.name || "",
+    code: editUser?.product_code || "",
+    description: editUser?.description || "",
+    price: editUser?.price || "",
+    discountType: editUser?.discount?.[0]?.discount_type || "",
+    discountAmt: editUser?.discount?.[0]?.discount_amt || "",
+    discountedPrice: dPrice || "",
+    stock: editUser?.stock || 0,
   });
-  const [dbData, setDbData] = useState({});
-  const [brandOption, setBrandsOption] = useState("");
+  const [brandOption, setBrandsOption] = useState({
+    value: editUser?.brand_id || "",
+    label: editUser?.brand_name || "",
+  });
   const [validImages, setValidImages] = useState([]);
   const [images, setImages] = useState([]);
   const [coverImage, setCoverImage] = useState(null);
-
-  // ---------------------------------------------
-
-  useEffect(() => {
-    if (editUser) {
-      const dPrice = discountedPrice(
-        editUser?.price,
-        editUser?.discount?.[0]?.discount_type,
-        editUser?.discount?.[0]?.discount_amt
-      );
-
-      setDbData({
-        ...dbData,
-        category: editUser?.category_id ?? "",
-        name: editUser?.name ?? "",
-        code: editUser?.product_code || "",
-        description: editUser?.description || "",
-        price: editUser?.price || "",
-        discountType: editUser?.discount?.[0]?.discount_type || "",
-        discountAmt: editUser?.discount?.[0]?.discount_amt || "",
-        discountedPrice: dPrice,
-        stock: editUser?.stock || 0,
-      });
-
-      setBrandsOption({
-        ...brandOption,
-        value: editUser?.brand_id || "",
-        label: editUser?.brand_name || "",
-      });
-
-      setValidImages((prev) => ({ ...prev, ...editUser?.images }));
-      setImages((prev) => ({ ...prev, ...editUser?.images }));
-      setCoverImage(editUser?.cover_image);
-    }
-  }, [editUser]);
+  const [dbImages, setDbImages] = useState(editUser.images || []);
+  const [dbCoverImage, setDbCoverImage] = useState(dbCover || null);
 
   // ---------------------------------------------
 
@@ -86,12 +63,18 @@ const AdEditProduct = () => {
     const updatedForm = { ...form, [e.target.name]: e.target.value };
     setForm(updatedForm);
 
-    const price = updatedForm.price;
-    const discountType = updatedForm.discountType;
-    const discountAmt = updatedForm.discountAmt;
+    if (
+      e.target.name === "price" ||
+      e.target.name === "discountType" ||
+      e.target.name === "discountAmt"
+    ) {
+      const price = updatedForm.price;
+      const discountType = updatedForm.discountType;
+      const discountAmt = updatedForm.discountAmt;
 
-    if (price && discountType && discountAmt) {
-      validateDiscount(price, discountType, discountAmt);
+      if (price && discountType && discountAmt) {
+        validateDiscount(price, discountType, discountAmt);
+      }
     }
   };
 
@@ -191,11 +174,29 @@ const AdEditProduct = () => {
     setImages((prevImages) => [...prevImages, ...filteredFiles]);
   };
 
-  const setAsCover = (index) => {
+  const setAsCover = (id) => {
+    setCoverImage(null);
+    const cover = dbImages.find((img) => img.id === id);
+    if (cover) {
+      setDbCoverImage(cover);
+    }
+  };
+
+  const removeImage = (id) => {
+    const newImages = dbImages.filter((img) => img.id !== id);
+    const removedImg = dbImages.find((img) => img.id === id);
+
+    setDbImages(newImages);
+    if (removedImg.id === dbCoverImage.id) {
+      setDbCoverImage(null);
+    }
+  };
+
+  const setAsNewCover = (index) => {
     setCoverImage(images[index]);
   };
 
-  const removeImage = (index) => {
+  const removeNewImage = (index) => {
     setValidImages((prevImages) => prevImages.filter((_, i) => i !== index));
     setImages((prevImages) => prevImages.filter((_, i) => i !== index));
     if (coverImage && images[index] === coverImage) {
@@ -233,7 +234,7 @@ const AdEditProduct = () => {
                 id="category"
                 className="flex h-10 w-full items-center justify-between rounded-sm border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground/70 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1"
                 autoFocus={true}
-                value={form.category || dbData.category}
+                value={form.category}
                 onChange={handleChange}
                 onSelect={resetErrors}
               >
@@ -294,7 +295,7 @@ const AdEditProduct = () => {
                 id="name"
                 name="name"
                 placeholder="Product name here"
-                value={form.name || dbData.name}
+                value={form.name}
                 onChange={handleChange}
                 onKeyUp={resetErrors}
               />
@@ -314,7 +315,7 @@ const AdEditProduct = () => {
                 id="code"
                 name="code"
                 placeholder="Product code here (if any)"
-                value={form.code || dbData.code}
+                value={form.code}
                 onChange={handleChange}
               />
               <span className="text-red-500 text-xs tracking-wider">
@@ -336,7 +337,7 @@ const AdEditProduct = () => {
                 id="description"
                 name="description"
                 placeholder="Product description here"
-                value={form.description || dbData.description}
+                value={form.description}
                 onChange={handleChange}
               ></Textarea>
               <span className="text-red-500 text-xs tracking-wider">
@@ -466,7 +467,7 @@ const AdEditProduct = () => {
             </span>
           </div>
           <div className="w-full flex gap-4 mb-4">
-            {coverImage && (
+            {coverImage ? (
               <div className="mb-4 p-0.5 w-32 rounded-sm">
                 <p className="text-center text-primary text-sm">Cover Image</p>
                 <img
@@ -475,10 +476,44 @@ const AdEditProduct = () => {
                   className="w-full h-24 object-cover rounded"
                 />
               </div>
-            )}
+            ) : dbCoverImage ? (
+              <div className="mb-4 p-0.5 w-32 rounded-sm">
+                <p className="text-center text-primary text-sm">Cover Image</p>
+                <img
+                  src={import.meta.env.VITE_BASE_URL + dbCoverImage.path}
+                  alt="Cover"
+                  className="w-full h-24 object-cover rounded"
+                />
+              </div>
+            ) : null}
 
             <div className="w-full flex gap-4">
-              {/* {validImages.map((img, index) => {
+              {Array.from(dbImages)?.map((img) => {
+                return (
+                  <div key={nanoid()} className="relative w-32">
+                    <img
+                      src={import.meta.env.VITE_BASE_URL + img.path}
+                      alt="Uploaded"
+                      className="w-full h-24 object-cover rounded"
+                    />
+                    <button
+                      type="button"
+                      className="absolute top-1 right-1 bg-red-500 text-white text-xs p-0.5 rounded"
+                      onClick={() => removeImage(img.id)}
+                    >
+                      <X size={14} />
+                    </button>
+                    <button
+                      type="button"
+                      className="absolute bottom-1 left-1 bg-primary text-white text-xs p-1 rounded"
+                      onClick={() => setAsCover(img.id)}
+                    >
+                      Set Cover
+                    </button>
+                  </div>
+                );
+              })}
+              {validImages.map((img, index) => {
                 return (
                   <div key={index} className="relative w-32">
                     <img
@@ -489,20 +524,20 @@ const AdEditProduct = () => {
                     <button
                       type="button"
                       className="absolute top-1 right-1 bg-red-500 text-white text-xs p-0.5 rounded"
-                      onClick={() => removeImage(index)}
+                      onClick={() => removeNewImage(index)}
                     >
                       <X size={14} />
                     </button>
                     <button
                       type="button"
                       className="absolute bottom-1 left-1 bg-primary text-white text-xs p-1 rounded"
-                      onClick={() => setAsCover(index)}
+                      onClick={() => setAsNewCover(index)}
                     >
                       Set Cover
                     </button>
                   </div>
                 );
-              })} */}
+              })}
             </div>
           </div>
         </div>
