@@ -18,17 +18,16 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, useLoaderData, useParams } from "react-router-dom";
 
-const AdAddEditProduct = () => {
+const AdEditProduct = () => {
+  const { parentCategories, editUser } = useLoaderData();
+  document.title = `${editUser?.name} | ${import.meta.env.VITE_APP_NAME}`;
+
   const { currentUser } = useSelector((store) => store.currentUser);
   const slug = currentUser?.user_details?.slug;
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const { id: editId } = useParams();
-  const { parentCategories, editUser } = useLoaderData();
-  document.title = editId
-    ? `${editUser?.name} | ${import.meta.env.VITE_APP_NAME}`
-    : `Add New Product | ${import.meta.env.VITE_APP_NAME}`;
-  const [brandOption, setBrandsOption] = useState("");
+
   const [form, setForm] = useState({
     category: "",
     name: "",
@@ -40,10 +39,46 @@ const AdAddEditProduct = () => {
     discountedPrice: "",
     stock: 0,
   });
-  const [coverImage, setCoverImage] = useState(null);
-  const [dbCover, setDbCover] = useState(null);
+  const [dbData, setDbData] = useState({});
+  const [brandOption, setBrandsOption] = useState("");
   const [validImages, setValidImages] = useState([]);
   const [images, setImages] = useState([]);
+  const [coverImage, setCoverImage] = useState(null);
+
+  // ---------------------------------------------
+
+  useEffect(() => {
+    if (editUser) {
+      const dPrice = discountedPrice(
+        editUser?.price,
+        editUser?.discount?.[0]?.discount_type,
+        editUser?.discount?.[0]?.discount_amt
+      );
+
+      setDbData({
+        ...dbData,
+        category: editUser?.category_id ?? "",
+        name: editUser?.name ?? "",
+        code: editUser?.product_code || "",
+        description: editUser?.description || "",
+        price: editUser?.price || "",
+        discountType: editUser?.discount?.[0]?.discount_type || "",
+        discountAmt: editUser?.discount?.[0]?.discount_amt || "",
+        discountedPrice: dPrice,
+        stock: editUser?.stock || 0,
+      });
+
+      setBrandsOption({
+        ...brandOption,
+        value: editUser?.brand_id || "",
+        label: editUser?.brand_name || "",
+      });
+
+      setValidImages((prev) => ({ ...prev, ...editUser?.images }));
+      setImages((prev) => ({ ...prev, ...editUser?.images }));
+      setCoverImage(editUser?.cover_image);
+    }
+  }, [editUser]);
 
   // ---------------------------------------------
 
@@ -113,42 +148,6 @@ const AdAddEditProduct = () => {
     setErrors({ ...errors, [e.target.name]: "" });
   };
 
-  // Image related functions start ----------------
-
-  const handleImageChange = (e) => {
-    const files = Array.from(e.target.files);
-    const filteredFiles = files.filter((file) => file.size <= 200 * 1024);
-
-    if (filteredFiles.length < files.length) {
-      setErrors({
-        ...errors,
-        images: "Some images were too large (over 200KB) and were not added.",
-      });
-    }
-
-    const newImages = filteredFiles.map((file) => ({
-      file,
-      preview: URL.createObjectURL(file),
-    }));
-
-    setValidImages((prevImages) => [...prevImages, ...newImages]);
-    setImages((prevImages) => [...prevImages, ...filteredFiles]);
-  };
-
-  const setAsCover = (index) => {
-    setCoverImage(images[index]);
-  };
-
-  const removeImage = (index) => {
-    setValidImages((prevImages) => prevImages.filter((_, i) => i !== index));
-    setImages((prevImages) => prevImages.filter((_, i) => i !== index));
-    if (coverImage && images[index] === coverImage) {
-      setCoverImage(null);
-    }
-  };
-
-  // Image related functions end ----------------
-
   // ---------------------------------------------
 
   const resetForm = () => {
@@ -173,147 +172,42 @@ const AdAddEditProduct = () => {
 
   // ---------------------------------------------
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  // Image related functions start ----------------
 
-    let errorBag = {};
-    let errorCount = 0;
-
-    if (!form.category) {
-      errorBag = { ...errorBag, category: "Category is required" };
-      errorCount++;
-    }
-    if (!brandOption) {
-      errorBag = { ...errorBag, brand: "Brand is required" };
-      errorCount++;
-    }
-    if (!form.name) {
-      errorBag = { ...errorBag, name: "Name is required" };
-      errorCount++;
-    }
-    if (!form.description) {
-      errorBag = { ...errorBag, description: "Description is required" };
-      errorCount++;
-    }
-    if (!form.price) {
-      errorBag = { ...errorBag, price: "Price is required" };
-      errorCount++;
-    }
-    if (!form.stock) {
-      errorBag = { ...errorBag, stock: "Stock is required" };
-      errorCount++;
-    }
-    if (!images || images.length === 0) {
-      errorBag = { ...errorBag, images: "At least one image is required" };
-      errorCount++;
-    }
-
-    if (errorCount > 0) {
-      setErrors(errorBag);
-      return;
-    }
-
-    setIsLoading(true);
-    const { value: brand } = brandOption;
-    let data = new FormData();
-    data.append("category", form.category);
-    data.append("brand", brand);
-    data.append("name", form.name);
-    data.append("code", form.code);
-    data.append("description", form.description);
-    data.append("price", form.price);
-    data.append("discountType", form.discountType);
-    data.append("discountAmt", form.discountAmt);
-    data.append("discountedPrice", form.discountedPrice);
-    data.append("stock", form.stock);
-    data.append("id", editId);
-
-    let remaining = [];
-
-    if (images && images.length > 0) {
-      for (let i = 0; i < images.length; i++) {
-        if (images[i] instanceof File) {
-          data.append("images[]", images[i]);
-        } else {
-          // console.error("Not a valid file:", images[i]);
-          if (editId) {
-            remaining = [...remaining, images[i]?.path];
-            data.append("remaining", JSON.stringify(remaining));
-          }
-        }
-      }
-
-      if (coverImage instanceof File) {
-        data.append("cover", coverImage);
-      } else {
-        // console.error("Not a valid file:", coverImage);
-      }
-    }
-
-    const apiUrl = editId
-      ? `/admin/products/update/${editId}`
-      : `/admin/products`;
-    const msg = editId ? "updated" : "added";
-
-    try {
-      const response = await customFetch.post(apiUrl, data, {
-        headers: { "Content-Type": "multipart/form-data" },
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    const filteredFiles = files.filter((file) => file.size <= 200 * 1024);
+    if (filteredFiles.length < files.length) {
+      setErrors({
+        ...errors,
+        images: "Some images were too large (over 200KB) and were not added.",
       });
+    }
+    const newImages = filteredFiles.map((file) => ({
+      file,
+      preview: URL.createObjectURL(file),
+    }));
+    setValidImages((prevImages) => [...prevImages, ...newImages]);
+    setImages((prevImages) => [...prevImages, ...filteredFiles]);
+  };
 
-      if (response?.status === 201 || response?.status === 200) {
-        !editId && resetForm();
-        showSuccess(`Product ${msg} successfully`);
-      }
-      setIsLoading(false);
-    } catch (error) {
-      setIsLoading(false);
-      console.log(error);
-      setErrors(error?.response?.data?.errors);
-      return;
+  const setAsCover = (index) => {
+    setCoverImage(images[index]);
+  };
+
+  const removeImage = (index) => {
+    setValidImages((prevImages) => prevImages.filter((_, i) => i !== index));
+    setImages((prevImages) => prevImages.filter((_, i) => i !== index));
+    if (coverImage && images[index] === coverImage) {
+      setCoverImage(null);
     }
   };
 
-  // ---------------------------------------------
+  // Image related functions end ----------------
 
-  useEffect(() => {
-    if (editUser) {
-      const dPrice = discountedPrice(
-        editUser?.price,
-        editUser?.discount?.[0]?.discount_type,
-        editUser?.discount?.[0]?.discount_amt
-      );
-
-      setForm({
-        ...form,
-        category: editUser?.category_id || "",
-        name: editUser?.name || "",
-        code: editUser?.code || "",
-        description: editUser?.description || "",
-        price: editUser?.price || "",
-        discountType: editUser?.discount?.[0]?.discount_type || "",
-        discountAmt: editUser?.discount?.[0]?.discount_amt || "",
-        discountedPrice: dPrice,
-        stock: editUser?.stock || 0,
-      });
-      setBrandsOption({
-        value: editUser?.brand_id || "",
-        label: editUser?.brand_name,
-      });
-
-      const imgArr = [];
-      editUser?.images?.map((img) => {
-        imgArr.push({ preview: `${import.meta.env.VITE_BASE_URL}${img.path}` });
-      });
-
-      const cover =
-        editUser?.images?.is_cover &&
-        `${import.meta.env.VITE_BASE_URL}${editUser?.images?.path}`;
-
-      setValidImages(imgArr);
-      setDbCover(cover);
-      setImages(editUser?.images);
-    }
-  }, [editId]);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  };
 
   return (
     <AppContentWrapper>
@@ -339,7 +233,7 @@ const AdAddEditProduct = () => {
                 id="category"
                 className="flex h-10 w-full items-center justify-between rounded-sm border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground/70 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1"
                 autoFocus={true}
-                value={form.category}
+                value={form.category || dbData.category}
                 onChange={handleChange}
                 onSelect={resetErrors}
               >
@@ -400,8 +294,9 @@ const AdAddEditProduct = () => {
                 id="name"
                 name="name"
                 placeholder="Product name here"
-                value={form.name}
+                value={form.name || dbData.name}
                 onChange={handleChange}
+                onKeyUp={resetErrors}
               />
               <span className="text-red-500 text-xs tracking-wider">
                 {errors?.name}
@@ -419,7 +314,7 @@ const AdAddEditProduct = () => {
                 id="code"
                 name="code"
                 placeholder="Product code here (if any)"
-                value={form.code}
+                value={form.code || dbData.code}
                 onChange={handleChange}
               />
               <span className="text-red-500 text-xs tracking-wider">
@@ -441,7 +336,7 @@ const AdAddEditProduct = () => {
                 id="description"
                 name="description"
                 placeholder="Product description here"
-                value={form.description}
+                value={form.description || dbData.description}
                 onChange={handleChange}
               ></Textarea>
               <span className="text-red-500 text-xs tracking-wider">
@@ -571,19 +466,19 @@ const AdAddEditProduct = () => {
             </span>
           </div>
           <div className="w-full flex gap-4 mb-4">
-            {/* {coverImage && ( */}
-            <div className="mb-4 p-0.5 w-32 rounded-sm">
-              <p className="text-center text-primary text-sm">Cover Image</p>
-              <img
-                src={coverImage ? URL.createObjectURL(coverImage) : dbCover}
-                alt="Cover"
-                className="w-full h-24 object-cover rounded"
-              />
-            </div>
-            {/* )} */}
+            {coverImage && (
+              <div className="mb-4 p-0.5 w-32 rounded-sm">
+                <p className="text-center text-primary text-sm">Cover Image</p>
+                <img
+                  src={URL.createObjectURL(coverImage)}
+                  alt="Cover"
+                  className="w-full h-24 object-cover rounded"
+                />
+              </div>
+            )}
 
             <div className="w-full flex gap-4">
-              {validImages.map((img, index) => {
+              {/* {validImages.map((img, index) => {
                 return (
                   <div key={index} className="relative w-32">
                     <img
@@ -607,13 +502,13 @@ const AdAddEditProduct = () => {
                     </button>
                   </div>
                 );
-              })}
+              })} */}
             </div>
           </div>
         </div>
         <div className="border border-muted rounded-sm p-4 mt-3 flex flex-row justify-center items-center gap-4">
           <AppSubmitBtn
-            text={editId ? `Update Details` : `Add Product`}
+            text={`Add Product`}
             isLoading={isLoading}
             customClass={`min-w-32 tracking-widest uppercase`}
           />
@@ -631,7 +526,7 @@ const AdAddEditProduct = () => {
     </AppContentWrapper>
   );
 };
-export default AdAddEditProduct;
+export default AdEditProduct;
 
 // ----------------------------------------------
 
@@ -646,12 +541,10 @@ export const loader = async ({ params }) => {
     const dbBrands = await customFetch.get(`/master/brands`);
     const brands = dbBrands.data;
 
-    if (id) {
-      const response = await customFetch.get(`/admin/products/${id}`);
+    const response = await customFetch.get(`/admin/products/${id}`);
 
-      if (response?.status === 200) {
-        editUser = response?.data?.data;
-      }
+    if (response?.status === 200) {
+      editUser = response?.data?.data;
     }
 
     return { parentCategories, brands, editUser };

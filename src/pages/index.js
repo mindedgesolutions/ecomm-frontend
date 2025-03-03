@@ -12,7 +12,8 @@ export { default as RouteError } from "@/pages/app/errors/RouteError";
 export { default as AdBrandList } from "@/pages/app/admin/masters/AdBrandList";
 export { default as AdCategoryList } from "@/pages/app/admin/masters/AdCategoryList";
 export { default as AdProductList } from "@/pages/app/admin/products/AdProductList";
-export { default as AdAddEditProduct } from "@/pages/app/admin/products/AdAddEditProduct";
+export { default as AdAddProduct } from "@/pages/app/admin/products/AdAddProduct";
+export { default as AdEditProduct } from "@/pages/app/admin/products/AdEditProduct";
 export { default as AdDiscountList } from "@/pages/app/admin/products/AdDiscountList";
 export { default as AdBoughtTogetherList } from "@/pages/app/admin/products/AdBoughtTogetherList";
 // Admin related pages end ---------------------

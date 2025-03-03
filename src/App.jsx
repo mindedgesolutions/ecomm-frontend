@@ -5,7 +5,7 @@ import store from "./store";
 // Loaders --------------------------------------------------
 import { loader as appLayoutLoader } from "@/pages/app/AppLayout";
 import { loader as adCategoryLoader } from "@/pages/app/admin/masters/AdCategoryList";
-import { loader as adAddEditProductLoader } from "@/pages/app/admin/products/AdAddEditProduct";
+import { loader as adAddEditProductLoader } from "@/pages/app/admin/products/AdAddProduct";
 
 const router = createBrowserRouter([
   {
@@ -36,12 +36,12 @@ const router = createBrowserRouter([
           { index: true, element: <wb.AdProductList /> },
           {
             path: "new",
-            element: <wb.AdAddEditProduct />,
+            element: <wb.AdAddProduct />,
             loader: adAddEditProductLoader,
           },
           {
             path: ":id/edit",
-            element: <wb.AdAddEditProduct />,
+            element: <wb.AdEditProduct />,
             loader: adAddEditProductLoader,
           },
           { path: "discounts", element: <wb.AdDiscountList /> },

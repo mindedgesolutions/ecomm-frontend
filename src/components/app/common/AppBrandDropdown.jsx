@@ -23,19 +23,22 @@ const AppBrandDropdown = ({ brandOption, setBrandsOption }) => {
 
   const customSingleValue = ({ data }) => (
     <span className="flex items-center text-muted-foreground -mt-6">
-      {data.imageUrl ? (
-        <img
-          src={data.imageUrl}
-          alt={import.meta.env.VITE_APP_NAME}
-          className="h-5 w-auto max-w-6 mr-3"
-        />
-      ) : (
-        <img
-          src={noImage}
-          alt={import.meta.env.VITE_APP_NAME}
-          className="h-5 w-auto max-w-6 mr-3"
-        />
-      )}
+      {brandOption.value ? (
+        data.imageUrl ? (
+          <img
+            src={data.imageUrl}
+            alt={import.meta.env.VITE_APP_NAME}
+            className="h-5 w-auto max-w-6 mr-3"
+          />
+        ) : (
+          <img
+            src={noImage}
+            alt={import.meta.env.VITE_APP_NAME}
+            className="h-5 w-auto max-w-6 mr-3"
+          />
+        )
+      ) : null}
+
       <span className="text-black">{data.label}</span>
     </span>
   );
